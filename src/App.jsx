@@ -5,6 +5,7 @@ import Portfolio from './components/Portfolio';
 import Workflow from './components/Workflow';
 import Blog from './components/Blog';
 import Footer from './components/Footer';
+import BottomNav from './components/BottomNav';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Blog />
       </main>
       <Footer />
+      <BottomNav />
     </>
   );
 }

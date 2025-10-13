@@ -105,3 +105,60 @@ export function CodeDev({ size = 30 }) {
     </svg>
   );
 }
+
+export function Home({ size = 20 }) {
+  return (
+    <svg width={size} height={size} fill="currentColor" viewBox="0 0 24 24">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" fill="none" stroke="currentColor" strokeWidth="2"/>
+      <polyline points="9 22 9 12 15 12 15 22" fill="none" stroke="currentColor" strokeWidth="2"/>
+    </svg>
+  );
+}
+
+export function HelpCircle({ size = 20 }) {
+  return (
+    <svg width={size} height={size} fill="currentColor" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2"/>
+      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" fill="none" stroke="currentColor" strokeWidth="2"/>
+      <line x1="12" y1="17" x2="12.01" y2="17" stroke="currentColor" strokeWidth="2"/>
+    </svg>
+  );
+}
+
+export function Services({ size = 20 }) {
+  return (
+    <svg width={size} height={size} fill="currentColor" viewBox="0 0 24 24">
+      <line x1="8" y1="6" x2="21" y2="6" stroke="currentColor" strokeWidth="2"/>
+      <line x1="8" y1="12" x2="21" y2="12" stroke="currentColor" strokeWidth="2"/>
+      <line x1="8" y1="18" x2="21" y2="18" stroke="currentColor" strokeWidth="2"/>
+      <line x1="3" y1="6" x2="3.01" y2="6" stroke="currentColor" strokeWidth="2"/>
+      <line x1="3" y1="12" x2="3.01" y2="12" stroke="currentColor" strokeWidth="2"/>
+      <line x1="3" y1="18" x2="3.01" y2="18" stroke="currentColor" strokeWidth="2"/>
+    </svg>
+  );
+}
+
+export function Blog({ size = 20 }) {
+  return (
+    <svg width={size} height={size} fill="currentColor" viewBox="0 0 24 24">
+      <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" fill="none" stroke="currentColor" strokeWidth="2"/>
+      <polyline points="13 2 13 9 20 9" fill="none" stroke="currentColor" strokeWidth="2"/>
+    </svg>
+  );
+}
+
+export function ChevronLeft({ size = 40 }) {
+  return (
+    <svg width={size} height={size} fill="currentColor" viewBox="0 0 24 24">
+      <polyline points="15 18 9 12 15 6" fill="none" stroke="currentColor" strokeWidth="2"/>
+    </svg>
+  );
+}
+
+export function ChevronRight({ size = 40 }) {
+  return (
+    <svg width={size} height={size} fill="currentColor" viewBox="0 0 24 24">
+      <polyline points="9 18 15 12 9 6" fill="none" stroke="currentColor" strokeWidth="2"/>
+    </svg>
+  );
+}
