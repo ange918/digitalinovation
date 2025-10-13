@@ -162,3 +162,63 @@ export function ChevronRight({ size = 40 }) {
     </svg>
   );
 }
+
+export function UserIcon({ size = 24 }) {
+  return (
+    <svg width={size} height={size} fill="currentColor" viewBox="0 0 24 24">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" fill="none" stroke="currentColor" strokeWidth="2"/>
+      <circle cx="12" cy="7" r="4" fill="none" stroke="currentColor" strokeWidth="2"/>
+    </svg>
+  );
+}
+
+export function Target({ size = 24 }) {
+  return (
+    <svg width={size} height={size} fill="currentColor" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2"/>
+      <circle cx="12" cy="12" r="6" fill="none" stroke="currentColor" strokeWidth="2"/>
+      <circle cx="12" cy="12" r="2" fill="none" stroke="currentColor" strokeWidth="2"/>
+    </svg>
+  );
+}
+
+export function Palette({ size = 24 }) {
+  return (
+    <svg width={size} height={size} fill="currentColor" viewBox="0 0 24 24">
+      <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 2-.8 2-2 0-.5-.2-1-.5-1.3-.3-.3-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.3c3 0 5.7-2.4 5.7-5.4C23 6.4 18.1 2 12 2z" fill="none" stroke="currentColor" strokeWidth="2"/>
+      <circle cx="6.5" cy="11.5" r="1.5"/>
+      <circle cx="9.5" cy="7.5" r="1.5"/>
+      <circle cx="14.5" cy="7.5" r="1.5"/>
+      <circle cx="17.5" cy="11.5" r="1.5"/>
+    </svg>
+  );
+}
+
+export function CodeBrackets({ size = 24 }) {
+  return (
+    <svg width={size} height={size} fill="currentColor" viewBox="0 0 24 24">
+      <polyline points="16 18 22 12 16 6" fill="none" stroke="currentColor" strokeWidth="2"/>
+      <polyline points="8 6 2 12 8 18" fill="none" stroke="currentColor" strokeWidth="2"/>
+    </svg>
+  );
+}
+
+export function CheckSquare({ size = 24 }) {
+  return (
+    <svg width={size} height={size} fill="currentColor" viewBox="0 0 24 24">
+      <polyline points="9 11 12 14 22 4" fill="none" stroke="currentColor" strokeWidth="2"/>
+      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" fill="none" stroke="currentColor" strokeWidth="2"/>
+    </svg>
+  );
+}
+
+export function Rocket({ size = 24 }) {
+  return (
+    <svg width={size} height={size} fill="currentColor" viewBox="0 0 24 24">
+      <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" fill="none" stroke="currentColor" strokeWidth="2"/>
+      <path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" fill="none" stroke="currentColor" strokeWidth="2"/>
+      <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" fill="none" stroke="currentColor" strokeWidth="2"/>
+      <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" fill="none" stroke="currentColor" strokeWidth="2"/>
+    </svg>
+  );
+}

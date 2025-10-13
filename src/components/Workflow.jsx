@@ -1,33 +1,35 @@
+import { UserIcon, Target, Palette, CodeBrackets, CheckSquare, Rocket } from './Icons';
+
 const workflowSteps = [
   {
-    number: "01",
+    icon: UserIcon,
     title: "Écoute & Analyse",
-    description: "Nous commençons par comprendre vos besoins, vos objectifs et votre vision pour établir une stratégie solide."
+    description: "Nous commençons par vous écouter attentivement. Comprendre vos besoins, vos objectifs et votre vision est essentiel pour poser les bases du projet."
   },
   {
-    number: "02",
+    icon: Target,
     title: "Stratégie & Planification",
-    description: "Élaboration d'une feuille de route détaillée avec des étapes claires et des délais précis pour votre projet."
+    description: "Une fois vos besoins identifiés, nous définissons une stratégie sur mesure et planifions chaque étape pour garantir un déroulement sans accroc."
   },
   {
-    number: "03",
+    icon: Palette,
     title: "Design & Création",
-    description: "Conception de maquettes visuelles et d'interfaces qui reflètent votre identité de marque et captivent vos utilisateurs."
+    description: "Nos designers entrent en scène pour donner vie à votre projet avec des visuels modernes, captivants et une expérience utilisateur fluide."
   },
   {
-    number: "04",
+    icon: CodeBrackets,
     title: "Développement & Implémentation",
-    description: "Transformation des designs en produits fonctionnels avec du code propre et des technologies modernes."
+    description: "Nos développeurs transforment les concepts en réalité grâce à du code propre, performant et sécurisé."
   },
   {
-    number: "05",
+    icon: CheckSquare,
     title: "Tests & Optimisation",
-    description: "Vérification rigoureuse de la qualité, des performances et de la sécurité avant le lancement."
+    description: "Avant le lancement, nous testons tout en détail pour corriger les moindres bugs et optimiser les performances."
   },
   {
-    number: "06",
+    icon: Rocket,
     title: "Lancement & Suivi",
-    description: "Mise en ligne de votre projet et accompagnement continu pour assurer son succès et son évolution."
+    description: "Votre projet est mis en ligne, mais notre travail ne s'arrête pas là. Nous vous accompagnons avec un suivi régulier pour garantir un succès durable."
   }
 ];
 
@@ -39,7 +41,9 @@ export default function Workflow() {
         <div className="workflow-grid">
           {workflowSteps.map((step, index) => (
             <div key={index} className="workflow-card">
-              <div className="workflow-number">{step.number}</div>
+              <div className="workflow-icon-circle">
+                <step.icon size={24} />
+              </div>
               <h3>{step.title}</h3>
               <p>{step.description}</p>
             </div>
