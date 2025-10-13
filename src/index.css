@@ -281,59 +281,104 @@ button {
 }
 
 .about .section-title {
-  color: var(--text-dark);
+  color: var(--deep-blue);
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  margin-bottom: 1.5rem;
+}
+
+.about-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+.about-left {
+  max-width: 500px;
 }
 
 .about-text {
-  font-size: 1.125rem;
-  max-width: 900px;
+  font-size: 1rem;
   margin-bottom: 2rem;
-  line-height: 1.8;
+  line-height: 1.7;
+  color: var(--text-dark);
 }
 
 .services-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2rem;
-  margin-top: 4rem;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .service-card {
+  padding: 2.5rem 2rem;
+  border-right: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
   background: white;
-  padding: 2rem;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
 }
 
 .service-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+  background: #f8fcff;
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(4, 16, 106, 0.15);
+  z-index: 10;
+}
+
+.service-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.service-divider {
+  width: 3px;
+  height: 40px;
+  background: var(--deep-blue);
+  border-radius: 2px;
+  transition: all 0.4s ease;
+}
+
+.service-card:hover .service-divider {
+  background: var(--accent-green);
+  height: 50px;
 }
 
 .service-icon {
-  width: 50px;
-  height: 50px;
-  background: var(--accent-green);
-  border-radius: 50%;
+  color: var(--deep-blue);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1rem;
-  color: white;
+  transition: all 0.4s ease;
+}
+
+.service-card:hover .service-icon {
+  color: var(--accent-green);
+  transform: scale(1.1);
 }
 
 .service-card h3 {
   font-family: var(--font-heading);
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: 1.15rem;
+  font-weight: 700;
   margin-bottom: 0.75rem;
-  color: var(--text-dark);
+  color: var(--deep-blue);
+  transition: color 0.3s ease;
+}
+
+.service-card:hover h3 {
+  color: var(--deep-blue);
 }
 
 .service-card p {
   color: #555;
-  line-height: 1.6;
+  line-height: 1.7;
+  font-size: 0.95rem;
 }
 
 /* =========================
@@ -623,8 +668,23 @@ button {
     display: block;
   }
 
+  .about-layout {
+    grid-template-columns: 1fr 1.2fr;
+    gap: 4rem;
+  }
+
   .services-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .service-card:nth-child(2),
+  .service-card:nth-child(4) {
+    border-right: none;
+  }
+
+  .service-card:nth-child(3),
+  .service-card:nth-child(4) {
+    border-bottom: none;
   }
 
   .workflow-grid {
@@ -647,6 +707,11 @@ button {
 
   .hero {
     padding: 10rem 0;
+  }
+
+  .about-layout {
+    grid-template-columns: 1fr 1.5fr;
+    gap: 5rem;
   }
 
   .services-grid {
