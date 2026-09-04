@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import { Poppins } from 'next/font/google';
 
+import { getAppUrl } from '@/lib/app-url';
+
 import './globals.css';
 
 /**
@@ -20,7 +22,7 @@ const poppins = Poppins({
   variable: '--font-poppins',
 });
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+const appUrl = getAppUrl();
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
