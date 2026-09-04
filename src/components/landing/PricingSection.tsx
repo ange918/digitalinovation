@@ -32,7 +32,7 @@ export function PricingSection() {
       <div className="container">
         <header className="max-w-2xl">
           <p className="fl-overline text-royal-600">Tarifs recruteur</p>
-          <h2 className="mt-4 font-serif text-display-sm text-midnight-900 sm:text-display-md">
+          <h2 className="mt-4 font-bold text-display-sm text-midnight-900 sm:text-display-md">
             Payez ce que vous utilisez
           </h2>
           <p className="mt-5 text-body-lg text-ink-muted">
@@ -141,10 +141,10 @@ function PlanCard({ tier, yearly }: { tier: PlanTier; yearly: boolean }) {
 
       <div className="mt-6">
         {isFree ? (
-          <p className="font-serif text-display-sm text-midnight-900">Gratuit</p>
+          <p className="font-bold text-display-sm text-midnight-900">Gratuit</p>
         ) : (
           <>
-            <p className="font-serif text-display-sm text-midnight-900 tabular">
+            <p className="font-bold text-display-sm text-midnight-900 tabular">
               {formatXof(price)}
             </p>
             <p className="mt-1 text-caption text-ink-subtle">

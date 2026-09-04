@@ -52,7 +52,7 @@ export function Section({
             {title && (
               <h2
                 className={cn(
-                  'mt-4 font-serif text-display-sm sm:text-display-md',
+                  'mt-4 font-bold text-display-sm sm:text-display-md',
                   tone === 'midnight' ? 'text-white' : 'text-midnight-900',
                 )}
               >

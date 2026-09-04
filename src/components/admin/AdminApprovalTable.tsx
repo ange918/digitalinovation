@@ -114,7 +114,7 @@ export function AdminApprovalTable({ jobs }: AdminApprovalTableProps) {
       {/* ---- En-tete ---- */}
       <header className="flex flex-col gap-4 border-b border-line p-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="font-serif text-title-lg text-midnight-900">
+          <h2 className="font-bold text-title-lg text-midnight-900">
             File de validation
           </h2>
           <p className="mt-1 text-body-sm text-ink-muted">
@@ -382,7 +382,7 @@ function RejectDialog({
       className="fixed inset-0 z-50 flex items-end justify-center bg-midnight-950/40 p-4 backdrop-blur-sm sm:items-center"
     >
       <div className="w-full max-w-lg animate-fade-in-up rounded-panel border border-line bg-white p-6 shadow-panel">
-        <h3 id="reject-title" className="font-serif text-title-lg text-midnight-900">
+        <h3 id="reject-title" className="font-bold text-title-lg text-midnight-900">
           Rejeter cette offre
         </h3>
         <p className="mt-1.5 text-body-sm text-ink-muted">
@@ -460,7 +460,7 @@ function EmptyState({ hasQuery }: { hasQuery: boolean }) {
       <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-canvas-alt text-ink-faint">
         <CheckIcon className="h-5 w-5" />
       </span>
-      <p className="mt-4 font-serif text-title-md text-midnight-900">
+      <p className="mt-4 font-bold text-title-md text-midnight-900">
         {hasQuery ? 'Aucun résultat' : 'File vide'}
       </p>
       <p className="mx-auto mt-1.5 max-w-sm text-body-sm text-ink-muted">

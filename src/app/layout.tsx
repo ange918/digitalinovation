@@ -1,35 +1,28 @@
 import type { Metadata, Viewport } from 'next';
-import { DM_Serif_Display, Poppins } from 'next/font/google';
+import { Poppins } from 'next/font/google';
+
+import { getAppUrl } from '@/lib/app-url';
 
 import './globals.css';
 
 /**
- * Polices auto-hebergees par next/font : aucun appel a fonts.googleapis.com au
- * runtime, donc pas de round-trip DNS supplementaire sur un reseau lent, et
- * zero decalage de mise en page grace au `size-adjust` genere.
+ * Genova porte toute l'identite FASHLINK, titres compris : c'est la police du
+ * site Susuni Lab, chargee depuis le meme CDN (voir le <link> dans <head>).
  *
- * DM Serif Display reste reserve aux tres grands titres (h1, h2) : c'est la
- * signature editoriale FASHLINK. Tout le reste passe en Poppins.
- */
-const dmSerif = DM_Serif_Display({
-  subsets: ['latin'],
-  weight: '400',
-  display: 'swap',
-  variable: '--font-dm-serif',
-});
-
-/**
- * Poppins : sans-serif geometrique alignee sur l'identite Susuni Lab.
- * Porte toute l'interface — boutons, cartes, tarifs, corps de texte.
+ * Poppins reste en repli, auto-hebergee par next/font mais **sans preload** :
+ * le fichier n'est telecharge que si Genova ne se charge pas. cdnfonts.com est
+ * un tiers hors de notre controle ; sans ce repli, une panne du CDN renverrait
+ * toute la plateforme a la police systeme.
  */
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700', '800'],
   display: 'swap',
+  preload: false,
   variable: '--font-poppins',
 });
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+const appUrl = getAppUrl();
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
@@ -72,7 +65,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={`${dmSerif.variable} ${poppins.variable}`}>
+    <html lang="fr" className={poppins.variable}>
+      <head>
+        {/* Genova — police de marque Susuni Lab. Meme source que susunilab.com. */}
+        <link href="https://fonts.cdnfonts.com/css/genova" rel="stylesheet" />
+      </head>
       <body className="min-h-screen bg-canvas antialiased">
         {/* Lien d'evitement : premiere tabulation pour les lecteurs d'ecran. */}
         <a

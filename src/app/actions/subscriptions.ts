@@ -8,6 +8,7 @@ import { requireRecruiter } from '@/lib/rbac';
 import { getGateway } from '@/lib/payments';
 import { getPlan } from '@/lib/billing';
 import { buildPaymentReference } from '@/lib/subscription-activation';
+import { getAppUrl } from '@/lib/app-url';
 
 const checkoutSchema = z.object({
   tier: z.enum(['PRO', 'PREMIUM']),
@@ -54,7 +55,7 @@ export async function createCheckoutAction(
     if (!company) return { ok: false, error: 'Fiche entreprise introuvable.' };
 
     const reference = buildPaymentReference(company.id, parsed.tier, parsed.cycle);
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+    const appUrl = getAppUrl();
 
     await prisma.payment.create({
       data: {

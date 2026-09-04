@@ -88,7 +88,7 @@ export const FAQ: FaqItem[] = [
   {
     question: 'Que veulent dire MAT, PRO, DEC, ACC, IMG et COM ?',
     answer:
-      "Ce sont les six familles de métiers qui structurent la plateforme : Matières & Textiles, Production & Confection, Design & Création, Accessoires & Maroquinerie, Image & Mannequinat, Communication & Vente. Vous pouvez en choisir plusieurs sur votre profil.",
+      "Ce sont les six familles de métiers qui structurent la plateforme : Matières & Fournitures, Production & Confection, Décoration & Finition, Accessoires, Image & Communication, Commerce & Distribution. Vous pouvez en choisir plusieurs sur votre profil.",
   },
   {
     question: 'Combien de temps avant qu’une offre soit publiée ?',

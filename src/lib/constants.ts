@@ -11,9 +11,9 @@ import type {
 /**
  * Les 6 categories metiers de FASHLINK.
  *
- * Le cahier des charges fixe les codes (MAT, PRO, DEC, ACC, IMG, COM) ; les
- * libelles ci-dessous sont la lecture retenue pour l'ecosysteme mode et sont
- * a valider avec Susuni Lab avant mise en production.
+ * Libelles et descriptions repris tels quels de `app/fashlink/categories.tsx`
+ * du depot Susuni Lab, qui fait autorite. Toute correction doit partir de la —
+ * les memes libelles servent la fiche de candidature et l'annuaire public.
  */
 export const CATEGORIES: Record<
   Category,
@@ -21,45 +21,39 @@ export const CATEGORIES: Record<
 > = {
   MAT: {
     code: 'MAT',
-    label: 'Matières & Textiles',
+    label: 'Matières & Fournitures',
     short: 'Matières',
-    description:
-      'Sourcing de tissus, teinture, wax et bogolan, contrôle qualité matière, négoce textile.',
+    description: 'Tissus, matières premières et fournitures pour la création.',
   },
   PRO: {
     code: 'PRO',
     label: 'Production & Confection',
     short: 'Production',
-    description:
-      'Modélisme, patronage, coupe, couture, broderie, supervision d’atelier et industrialisation.',
+    description: 'Ateliers, couturiers et unités de confection.',
   },
   DEC: {
     code: 'DEC',
-    label: 'Design & Création',
-    short: 'Design',
-    description:
-      'Direction de collection, stylisme, illustration de mode, recherche de tendances.',
+    label: 'Décoration & Finition',
+    short: 'Décoration',
+    description: 'Broderie, perlage, impression et finitions d’exception.',
   },
   ACC: {
     code: 'ACC',
-    label: 'Accessoires & Maroquinerie',
+    label: 'Accessoires',
     short: 'Accessoires',
-    description:
-      'Maroquinerie, chaussure, bijou, chapellerie, travail du cuir et des perles.',
+    description: 'Bijoux, sacs, chaussures et pièces d’ornement.',
   },
   IMG: {
     code: 'IMG',
-    label: 'Image & Mannequinat',
+    label: 'Image & Communication',
     short: 'Image',
-    description:
-      'Mannequinat, photographie, direction artistique, stylisme photo, maquillage et coiffure.',
+    description: 'Mannequins, photographes, vidéastes et créatifs digitaux.',
   },
   COM: {
     code: 'COM',
-    label: 'Communication & Vente',
-    short: 'Communication',
-    description:
-      'Marketing, community management, relations presse, vente en boutique et e-commerce.',
+    label: 'Commerce & Distribution',
+    short: 'Commerce',
+    description: 'Boutiques, e-commerçants et réseaux de distribution.',
   },
 };
 

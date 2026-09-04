@@ -127,7 +127,7 @@ export function JobCard({ job, isSaved = false, onToggleSave, className }: JobCa
       </header>
 
       {/* ---- Titre : la signature serif de FASHLINK ---- */}
-      <h3 className="mt-4 font-serif text-title-md text-midnight-900">
+      <h3 className="mt-4 font-bold text-title-md text-midnight-900">
         <Link
           href={`/offres/${job.slug}`}
           className={cn(
@@ -211,7 +211,7 @@ function CompanyLogo({ name, logoUrl }: { name: string; logoUrl: string | null }
       aria-hidden="true"
       className={cn(
         'flex h-11 w-11 shrink-0 items-center justify-center rounded-lg',
-        'border border-line bg-canvas-alt font-serif text-title-md text-midnight-400',
+        'border border-line bg-canvas-alt font-semibold text-title-md text-midnight-400',
       )}
     >
       {name.charAt(0).toUpperCase()}

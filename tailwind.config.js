@@ -36,17 +36,17 @@ module.exports = {
       colors: {
         // --- Bleu roi : couleur d'action ------------------------------------
         royal: {
-          50: '#EEF6FC',
-          100: '#D6EAF7',
-          200: '#AFD5EF',
-          300: '#7FBBE4',
-          400: '#4A9BD4',
-          500: '#1A7BBF', // couleur de marque
-          600: '#1666A1',
-          700: '#125283',
-          800: '#0E3F65',
-          900: '#0A2E4A',
-          DEFAULT: '#1A7BBF',
+          50: '#E8F4FB',
+          100: '#CCE7F6',
+          200: '#99CFEC',
+          300: '#5FB2DF',
+          400: '#2593CE',
+          500: '#0078B7', // couleur de marque Susuni Lab
+          600: '#00669C',
+          700: '#005480',
+          800: '#004164',
+          900: '#00304A',
+          DEFAULT: '#0078B7',
         },
         // --- Bleu nuit : couleur de texte et de surface sombre --------------
         midnight: {
@@ -58,10 +58,10 @@ module.exports = {
           500: '#474E78',
           600: '#333A5E',
           700: '#262C4B',
-          800: '#1E2440',
-          900: '#1A2044', // couleur de marque
-          950: '#11142B',
-          DEFAULT: '#1A2044',
+          800: '#1F2745',
+          900: '#1B2441', // couleur de marque Susuni Lab
+          950: '#11162B',
+          DEFAULT: '#1B2441',
         },
         // --- Neutres chauds : fonds et bordures -----------------------------
         canvas: {
@@ -70,7 +70,7 @@ module.exports = {
           warm: '#FAFAF8', // fond des sections editoriales
         },
         ink: {
-          DEFAULT: '#1A2044', // texte principal
+          DEFAULT: '#1B2441', // texte principal
           muted: '#5B6178', // texte secondaire
           subtle: '#8A8FA3', // legendes, meta
           faint: '#B4B8C5', // placeholders
@@ -87,19 +87,18 @@ module.exports = {
       },
 
       fontFamily: {
-        // DM Serif Display : reserve aux h1/h2, signature editoriale.
-        serif: ['var(--font-dm-serif)', 'Georgia', 'Cambria', 'serif'],
-        // Poppins : geometrique, alignee sur l'identite Susuni Lab.
-        sans: ['var(--font-poppins)', 'Inter', 'system-ui', 'sans-serif'],
+        // Genova : police de marque Susuni Lab, chargee par <link> dans le
+        // layout. Poppins auto-hebergee sert de repli si le CDN est injoignable.
+        sans: ['Genova', 'var(--font-poppins)', 'system-ui', 'sans-serif'],
       },
 
       fontSize: {
         // Echelle editoriale : titres genereux, interlignage serre en display.
-        'display-xl': ['4.5rem', { lineHeight: '1.02', letterSpacing: '-0.03em' }],
-        'display-lg': ['3.5rem', { lineHeight: '1.05', letterSpacing: '-0.025em' }],
-        'display-md': ['2.75rem', { lineHeight: '1.1', letterSpacing: '-0.02em' }],
-        'display-sm': ['2.125rem', { lineHeight: '1.15', letterSpacing: '-0.015em' }],
-        'title-lg': ['1.625rem', { lineHeight: '1.25', letterSpacing: '-0.01em' }],
+        'display-xl': ['4.5rem', { lineHeight: '1.04', letterSpacing: '-0.015em' }],
+        'display-lg': ['3.5rem', { lineHeight: '1.07', letterSpacing: '-0.012em' }],
+        'display-md': ['2.75rem', { lineHeight: '1.12', letterSpacing: '-0.01em' }],
+        'display-sm': ['2.125rem', { lineHeight: '1.18', letterSpacing: '-0.008em' }],
+        'title-lg': ['1.625rem', { lineHeight: '1.28', letterSpacing: '-0.005em' }],
         'title-md': ['1.25rem', { lineHeight: '1.35', letterSpacing: '-0.005em' }],
         'body-lg': ['1.0625rem', { lineHeight: '1.7' }],
         body: ['0.96875rem', { lineHeight: '1.68' }],
@@ -129,14 +128,14 @@ module.exports = {
       boxShadow: {
         // Ombres tres basses opacites, teintees bleu nuit et non noir pur :
         // c'est ce qui donne l'impression « papier glace » plutot que « web ».
-        subtle: '0 1px 2px 0 rgba(26, 32, 68, 0.04)',
-        card: '0 1px 3px rgba(26, 32, 68, 0.05), 0 8px 24px -12px rgba(26, 32, 68, 0.08)',
-        'card-hover': '0 2px 6px rgba(26, 32, 68, 0.06), 0 16px 40px -16px rgba(26, 32, 68, 0.14)',
-        panel: '0 4px 12px rgba(26, 32, 68, 0.05), 0 24px 56px -24px rgba(26, 32, 68, 0.16)',
+        subtle: '0 1px 2px 0 rgba(27, 36, 65, 0.04)',
+        card: '0 1px 3px rgba(27, 36, 65, 0.05), 0 8px 24px -12px rgba(27, 36, 65, 0.08)',
+        'card-hover': '0 2px 6px rgba(27, 36, 65, 0.06), 0 16px 40px -16px rgba(27, 36, 65, 0.14)',
+        panel: '0 4px 12px rgba(27, 36, 65, 0.05), 0 24px 56px -24px rgba(27, 36, 65, 0.16)',
         // Bouton primaire : legere elevation coloree.
-        royal: '0 2px 8px -2px rgba(26, 123, 191, 0.4)',
+        royal: '0 2px 8px -2px rgba(0, 120, 183, 0.4)',
         // Anneau de focus accessible, reutilise partout.
-        focus: '0 0 0 3px rgba(26, 123, 191, 0.22)',
+        focus: '0 0 0 3px rgba(0, 120, 183, 0.22)',
         none: 'none',
       },
 

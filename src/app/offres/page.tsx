@@ -74,7 +74,7 @@ export default async function JobsPage({ searchParams }: PageProps) {
       <main className="min-h-[60vh]">
         <div className="border-b border-line bg-white">
           <div className="container py-12 sm:py-16">
-            <h1 className="font-serif text-display-sm text-midnight-900">
+            <h1 className="font-bold text-display-sm text-midnight-900">
               {category ? CATEGORIES[category].label : 'Toutes les offres'}
             </h1>
             <p className="mt-3 max-w-xl text-body text-ink-muted">
@@ -145,7 +145,7 @@ export default async function JobsPage({ searchParams }: PageProps) {
             </p>
           ) : jobs.length === 0 ? (
             <div className="rounded-card border border-dashed border-line py-20 text-center">
-              <p className="font-serif text-title-lg text-midnight-900">Aucune offre</p>
+              <p className="font-bold text-title-lg text-midnight-900">Aucune offre</p>
               <p className="mx-auto mt-2 max-w-sm text-body-sm text-ink-muted">
                 Aucune offre ne correspond à votre recherche. Élargissez les critères
                 ou revenez bientôt.

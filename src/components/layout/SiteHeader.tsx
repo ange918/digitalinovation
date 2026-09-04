@@ -96,7 +96,7 @@ function Wordmark({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        'font-serif text-title-md tracking-[0.18em] text-midnight-900',
+        'font-bold text-title-md tracking-[0.18em] text-midnight-900',
         className,
       )}
     >

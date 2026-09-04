@@ -14,7 +14,7 @@ export function FinalCta() {
 
       <div className="container relative py-20 sm:py-26">
         <div className="max-w-2xl">
-          <h2 className="font-serif text-display-sm text-white sm:text-display-md">
+          <h2 className="font-bold text-display-sm text-white sm:text-display-md">
             Votre place est déjà dans la base.
           </h2>
           <p className="mt-5 text-body-lg text-white/70">
