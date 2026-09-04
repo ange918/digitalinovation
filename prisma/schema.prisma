@@ -1,0 +1,753 @@
+// =============================================================================
+// FASHLINK — Schema de donnees PostgreSQL (Prisma ORM)
+// Susuni Lab — Cotonou, Benin
+// -----------------------------------------------------------------------------
+// Plateforme de mise en relation emploi / stage / freelance dediee a
+// l'ecosysteme de la mode en Afrique francophone.
+//
+// Conventions :
+//  - Identifiants : cuid() (triables, non devinables, surs en URL).
+//  - Horodatage   : createdAt / updatedAt sur toute entite mutable.
+//  - Suppression  : soft delete via `deletedAt` sur User et Job uniquement
+//                   (obligations legales de tracabilite des candidatures).
+//  - Monnaie      : montants en XOF stockes en entier (le franc CFA n'a pas
+//                   de subdivision utilisee) -> jamais de flottant.
+// =============================================================================
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearchPostgres"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // Supabase / PgBouncer : ajouter `directUrl = env("DIRECT_URL")` et la
+  // variable correspondante pour que les migrations contournent le pooler.
+}
+
+// =============================================================================
+// ENUMERATIONS
+// =============================================================================
+
+/// Role global. Determine l'acces aux espaces /talent, /recruteur, /admin.
+enum UserRole {
+  TALENT
+  RECRUITER
+  ADMIN
+}
+
+/// Cycle de vie d'un compte.
+enum UserStatus {
+  PENDING_VERIFICATION // email non confirme
+  ACTIVE
+  SUSPENDED // sanction moderation
+  DEACTIVATED // desactive par l'utilisateur
+}
+
+/// Les 6 categories metiers structurantes de FASHLINK.
+/// Elles servent a la fois au profil talent et au ciblage des offres.
+enum Category {
+  MAT // Matieres & Textiles
+  PRO // Production & Confection
+  DEC // Design & Creation
+  ACC // Accessoires & Maroquinerie
+  IMG // Image, Mannequinat & Direction artistique
+  COM // Communication, Marketing & Vente
+}
+
+/// Nature du contrat propose.
+enum JobType {
+  EMPLOI
+  STAGE
+  FREELANCE
+}
+
+/// Modalite d'execution.
+enum WorkMode {
+  SUR_SITE
+  HYBRIDE
+  DISTANCIEL
+}
+
+/// Niveau d'experience attendu.
+enum ExperienceLevel {
+  DEBUTANT // 0-1 an
+  JUNIOR // 1-3 ans
+  CONFIRME // 3-6 ans
+  SENIOR // 6 ans et +
+}
+
+/// Workflow de moderation des offres (coeur du modele FASHLINK).
+/// DRAFT -> PENDING_VALIDATION -> ACTIVE -> CLOSED
+///                            \-> REJECTED
+enum JobStatus {
+  DRAFT
+  PENDING_VALIDATION
+  ACTIVE
+  REJECTED
+  CLOSED
+  EXPIRED
+  ARCHIVED
+}
+
+/// Suivi d'etat d'une candidature, cote recruteur.
+enum ApplicationStatus {
+  SUBMITTED
+  VIEWED
+  SHORTLISTED
+  INTERVIEW
+  OFFER
+  HIRED
+  REJECTED
+  WITHDRAWN // retiree par le talent
+}
+
+/// Paliers d'abonnement recruteur.
+enum PlanTier {
+  STARTER // gratuit
+  PRO
+  PREMIUM
+}
+
+/// Cycle de vie d'un abonnement.
+enum SubscriptionStatus {
+  PENDING_PAYMENT
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  EXPIRED
+}
+
+/// Prestataires de paiement mobile money disponibles au Benin.
+enum PaymentProvider {
+  CINETPAY
+  WAVE
+  MTN_MOMO
+  MANUAL // regularisation par l'equipe FASHLINK
+}
+
+/// Etat d'une transaction de paiement.
+enum PaymentStatus {
+  INITIATED
+  PENDING
+  SUCCEEDED
+  FAILED
+  CANCELED
+  REFUNDED
+}
+
+/// Type de piece jointe d'un portfolio.
+enum MediaType {
+  IMAGE
+  VIDEO
+  PDF
+}
+
+/// Categorie de notification interne.
+enum NotificationType {
+  APPLICATION_RECEIVED
+  APPLICATION_STATUS_CHANGED
+  JOB_APPROVED
+  JOB_REJECTED
+  JOB_EXPIRING
+  NEW_MESSAGE
+  SUBSCRIPTION_ACTIVATED
+  SUBSCRIPTION_EXPIRING
+}
+
+// =============================================================================
+// IDENTITE & COMPTES
+// =============================================================================
+
+/// Compte utilisateur unique, quel que soit le role.
+/// Un TALENT possede un Profile ; un RECRUITER possede une Company.
+model User {
+  id            String     @id @default(cuid())
+  email         String     @unique
+  /// Hash bcrypt. Null si le compte provient d'un provider OAuth.
+  passwordHash  String?
+  role          UserRole   @default(TALENT)
+  status        UserStatus @default(PENDING_VERIFICATION)
+
+  firstName     String
+  lastName      String
+  /// Format E.164, ex. +22997000000. Sert au rapprochement Mobile Money.
+  phone         String?    @unique
+  avatarUrl     String?
+  locale        String     @default("fr")
+
+  emailVerifiedAt DateTime?
+  lastLoginAt     DateTime?
+
+  // Relations
+  profile       Profile?
+  company       Company?
+  applications  Application[]
+  sentMessages     Message[]      @relation("MessageSender")
+  conversations    ConversationParticipant[]
+  notifications    Notification[]
+  savedJobs        SavedJob[]
+  reviewedJobs     Job[]          @relation("JobReviewer")
+  auditLogs        AuditLog[]
+  sessions         Session[]
+  verificationTokens VerificationToken[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([role, status])
+  @@index([createdAt])
+  @@map("users")
+}
+
+/// Session persistee (strategie JWT + revocation cote serveur).
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// SHA-256 du refresh token : le token brut n'est jamais stocke.
+  tokenHash    String   @unique
+  userAgent    String?
+  ipAddress    String?
+  expiresAt    DateTime
+  revokedAt    DateTime?
+  createdAt    DateTime @default(now())
+
+  @@index([userId, expiresAt])
+  @@map("sessions")
+}
+
+/// Jeton a usage unique : verification d'email, reinitialisation de mot de passe.
+model VerificationToken {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String   @unique
+  purpose   String // EMAIL_VERIFICATION | PASSWORD_RESET
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([userId, purpose])
+  @@map("verification_tokens")
+}
+
+// =============================================================================
+// TALENTS
+// =============================================================================
+
+/// Profil public d'un talent. Une seule ligne par User de role TALENT.
+model Profile {
+  id       String @id @default(cuid())
+  userId   String @unique
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// Slug public stable : /talents/awa-diallo-x7f2
+  slug     String @unique
+
+  headline String? @db.VarChar(120) // « Modeliste specialisee pret-a-porter »
+  bio      String? @db.Text
+
+  /// Categories metiers du talent (1 a 6 parmi MAT/PRO/DEC/ACC/IMG/COM).
+  categories      Category[]
+  experienceLevel ExperienceLevel @default(DEBUTANT)
+  /// Competences libres normalisees en minuscules cote applicatif.
+  skills          String[]
+  languages       String[]        @default(["fr"])
+
+  city    String?
+  country String  @default("BJ") // ISO 3166-1 alpha-2
+
+  /// Disponibilite et attentes.
+  openToWork      Boolean   @default(true)
+  openToJobTypes  JobType[] @default([EMPLOI, STAGE, FREELANCE])
+  availableFrom   DateTime?
+  /// Tarif journalier freelance en XOF (entier).
+  dailyRateXof    Int?
+
+  portfolioUrl String?
+  instagramUrl String?
+  linkedinUrl  String?
+  /// CV heberge sur Cloudinary / S3.
+  resumeUrl    String?
+
+  /// Compteur denormalise, rafraichi a chaque vue de fiche (evite un COUNT).
+  profileViews Int @default(0)
+
+  portfolioItems PortfolioItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([categories])
+  @@index([openToWork, country])
+  @@index([experienceLevel])
+  @@map("profiles")
+}
+
+/// Piece de portfolio (book mannequin, planche de collection, video defile...).
+model PortfolioItem {
+  id        String    @id @default(cuid())
+  profileId String
+  profile   Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  title       String    @db.VarChar(140)
+  description String?   @db.Text
+  mediaType   MediaType @default(IMAGE)
+  /// URL Cloudinary/S3 de l'original.
+  mediaUrl    String
+  /// Miniature 400px generee a l'upload — sert les listes en 3G.
+  thumbnailUrl String?
+  /// Placeholder base64 flou (~1 Ko) affiche pendant le chargement.
+  blurDataUrl  String?  @db.Text
+  category     Category?
+  /// Ordre d'affichage dans le book.
+  position     Int      @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([profileId, position])
+  @@map("portfolio_items")
+}
+
+// =============================================================================
+// RECRUTEURS
+// =============================================================================
+
+/// Entreprise / atelier / marque rattachee a un User de role RECRUITER.
+model Company {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name        String  @db.VarChar(160)
+  slug        String  @unique
+  logoUrl     String?
+  coverUrl    String?
+  description String? @db.Text
+  websiteUrl  String?
+
+  /// Secteur principal au sein de l'ecosysteme mode.
+  categories  Category[]
+  city        String?
+  country     String     @default("BJ")
+  /// Numero IFU (Benin) ou registre du commerce local.
+  taxId       String?
+  employeeCount String?  // "1-10", "11-50", ...
+
+  /// Badge « Entreprise verifiee » attribue par l'equipe FASHLINK.
+  isVerified   Boolean   @default(false)
+  verifiedAt   DateTime?
+
+  jobs          Job[]
+  subscriptions Subscription[]
+  payments      Payment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([country, isVerified])
+  @@map("companies")
+}
+
+// =============================================================================
+// OFFRES
+// =============================================================================
+
+/// Offre d'emploi, de stage ou de mission freelance.
+/// Toute offre transite par PENDING_VALIDATION avant publication.
+model Job {
+  id        String @id @default(cuid())
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  slug        String  @unique
+  title       String  @db.VarChar(160)
+  description String  @db.Text
+  /// Missions et profil recherche, en liste pour un rendu editorial aere.
+  missions     String[]
+  requirements String[]
+  benefits     String[]
+
+  category  Category
+  /// Categories secondaires : une offre de direction artistique peut viser IMG + COM.
+  secondaryCategories Category[] @default([])
+
+  jobType         JobType
+  workMode        WorkMode        @default(SUR_SITE)
+  experienceLevel ExperienceLevel @default(DEBUTANT)
+
+  city    String?
+  country String  @default("BJ")
+
+  /// Fourchette de remuneration en XOF. Null = « selon profil ».
+  salaryMinXof Int?
+  salaryMaxXof Int?
+  /// Periodicite affichee : MOIS | JOUR | MISSION.
+  salaryPeriod String? @default("MOIS")
+  showSalary   Boolean @default(true)
+
+  /// Duree pour un stage ou une mission freelance, en mois.
+  durationMonths Int?
+
+  status JobStatus @default(DRAFT)
+
+  // --- Workflow de moderation -------------------------------------------
+  submittedAt DateTime?
+  /// Admin ayant statue.
+  reviewedById String?
+  reviewedBy   User?     @relation("JobReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewedAt   DateTime?
+  /// Motif communique au recruteur en cas de rejet.
+  rejectionReason String? @db.Text
+
+  publishedAt DateTime?
+  /// Retrait automatique de la liste publique passe cette date.
+  expiresAt   DateTime?
+  closedAt    DateTime?
+
+  /// Mise en avant reservee aux plans PRO / PREMIUM.
+  isFeatured   Boolean   @default(false)
+  featuredUntil DateTime?
+
+  /// Compteurs denormalises pour le dashboard recruteur.
+  viewCount        Int @default(0)
+  applicationCount Int @default(0)
+
+  applications  Application[]
+  savedBy       SavedJob[]
+  conversations Conversation[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  // Index de la file de moderation admin (tri FIFO sur submittedAt).
+  @@index([status, submittedAt])
+  // Index de la liste publique : statut + fraicheur.
+  @@index([status, publishedAt])
+  // Facettes de recherche.
+  @@index([category, jobType, status])
+  @@index([country, city])
+  @@index([companyId, status])
+  @@index([isFeatured, publishedAt])
+  @@map("jobs")
+}
+
+/// Offre mise de cote par un talent.
+model SavedJob {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobId  String
+  job    Job    @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, jobId])
+  @@index([userId, createdAt])
+  @@map("saved_jobs")
+}
+
+// =============================================================================
+// CANDIDATURES
+// =============================================================================
+
+/// Candidature « en un clic » : le profil et le CV du talent sont rattaches
+/// automatiquement, la lettre de motivation reste optionnelle.
+model Application {
+  id     String @id @default(cuid())
+  jobId  String
+  job    Job    @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  status ApplicationStatus @default(SUBMITTED)
+
+  coverLetter String? @db.Text
+  /// Copie figee de l'URL du CV au moment de la candidature : le talent peut
+  /// mettre son CV a jour sans alterer les dossiers deja envoyes.
+  resumeUrlSnapshot String?
+
+  /// Note interne du recruteur, invisible du candidat.
+  recruiterNote String? @db.Text
+  /// Evaluation 1-5 pour le tri de la shortlist.
+  rating        Int?
+
+  viewedAt   DateTime?
+  decidedAt  DateTime?
+
+  events        ApplicationEvent[]
+  conversations Conversation[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  /// Une seule candidature par talent et par offre.
+  @@unique([jobId, userId])
+  @@index([userId, createdAt])
+  @@index([jobId, status])
+  @@index([status, createdAt])
+  @@map("applications")
+}
+
+/// Journal d'etat d'une candidature — alimente la timeline cote talent.
+model ApplicationEvent {
+  id            String      @id @default(cuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  fromStatus ApplicationStatus?
+  toStatus   ApplicationStatus
+  /// Auteur du changement (recruteur, talent ou systeme). Null si automatique.
+  actorId    String?
+  comment    String? @db.Text
+
+  createdAt DateTime @default(now())
+
+  @@index([applicationId, createdAt])
+  @@map("application_events")
+}
+
+// =============================================================================
+// ABONNEMENTS & PAIEMENTS
+// =============================================================================
+
+/// Catalogue des offres commerciales. Table plutot qu'enum fige : les prix
+/// et quotas evoluent sans migration de schema.
+model Plan {
+  id   String   @id @default(cuid())
+  tier PlanTier @unique
+
+  name        String
+  description String? @db.Text
+  /// Prix mensuel en XOF (entier). 0 pour STARTER.
+  priceXof    Int
+  /// Prix annuel remise, null si non propose.
+  priceYearlyXof Int?
+
+  /// Quotas appliques par le middleware de facturation.
+  jobPostQuota    Int // offres actives simultanees (-1 = illimite)
+  featuredQuota   Int @default(0) // mises en avant par mois
+  seatQuota       Int @default(1) // comptes recruteurs
+  canSearchTalents Boolean @default(false)
+  canExportApplications Boolean @default(false)
+  hasPrioritySupport Boolean @default(false)
+
+  isActive Boolean @default(true)
+
+  subscriptions Subscription[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("plans")
+}
+
+/// Abonnement d'une entreprise a un plan, sur une periode donnee.
+model Subscription {
+  id        String  @id @default(cuid())
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  planId    String
+  plan      Plan    @relation(fields: [planId], references: [id])
+
+  status SubscriptionStatus @default(PENDING_PAYMENT)
+
+  currentPeriodStart DateTime  @default(now())
+  currentPeriodEnd   DateTime
+  canceledAt         DateTime?
+  /// Renouvellement manuel par defaut : le Mobile Money ne permet pas de
+  /// prelevement recurrent fiable au Benin.
+  autoRenew          Boolean   @default(false)
+
+  /// Consommation de la periode courante, remise a zero au renouvellement.
+  jobPostsUsed  Int @default(0)
+  featuredUsed  Int @default(0)
+
+  payments Payment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  /// Une entreprise n'a qu'un abonnement actif : garanti applicativement
+  /// (transaction) et par cet index de recherche.
+  @@index([companyId, status])
+  @@index([status, currentPeriodEnd])
+  @@map("subscriptions")
+}
+
+/// Transaction de paiement mobile money (CinetPay / Wave / MTN MoMo).
+model Payment {
+  id             String  @id @default(cuid())
+  companyId      String
+  company        Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  subscriptionId String?
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+
+  provider PaymentProvider
+  status   PaymentStatus   @default(INITIATED)
+
+  /// Reference generee par FASHLINK et transmise au PSP (idempotence).
+  reference String @unique
+  /// Identifiant de transaction cote prestataire, connu apres le webhook.
+  providerTransactionId String? @unique
+
+  amountXof Int
+  currency  String @default("XOF")
+
+  /// Numero mobile money utilise (E.164), pour le rapprochement comptable.
+  payerPhone String?
+  /// Charge utile brute du webhook, conservee telle quelle pour audit/litige.
+  rawPayload Json?
+  failureReason String? @db.Text
+
+  paidAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([companyId, createdAt])
+  @@index([status, provider])
+  @@map("payments")
+}
+
+/// Journal des webhooks recus. Cle d'idempotence : un meme evenement rejoue
+/// par le PSP ne doit jamais crediter deux fois un abonnement.
+model WebhookEvent {
+  id       String          @id @default(cuid())
+  provider PaymentProvider
+  /// Identifiant d'evenement du PSP, ou hash du payload s'il n'en fournit pas.
+  eventId  String
+  payload  Json
+  /// Signature HMAC brute, conservee pour re-verification a posteriori.
+  signature String?
+
+  processedAt DateTime?
+  error       String?   @db.Text
+  attempts    Int       @default(0)
+
+  createdAt DateTime @default(now())
+
+  @@unique([provider, eventId])
+  @@index([processedAt])
+  @@map("webhook_events")
+}
+
+// =============================================================================
+// MESSAGERIE INTERNE
+// =============================================================================
+
+/// Fil de discussion, generalement ouvert par un recruteur sur une candidature.
+model Conversation {
+  id     String @id @default(cuid())
+  /// Contexte metier : offre et candidature d'origine (optionnels).
+  jobId  String?
+  job    Job?    @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  applicationId String?
+  application   Application? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+
+  subject String? @db.VarChar(160)
+
+  /// Denormalise pour trier la boite de reception sans jointure.
+  lastMessageAt DateTime @default(now())
+
+  participants ConversationParticipant[]
+  messages     Message[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([lastMessageAt])
+  @@map("conversations")
+}
+
+/// Table de jonction : qui participe a quel fil, et ou en est sa lecture.
+model ConversationParticipant {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  lastReadAt DateTime?
+  /// Compteur de non-lus, incremente a l'ecriture d'un message par un tiers.
+  unreadCount Int     @default(0)
+  isArchived  Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@unique([conversationId, userId])
+  @@index([userId, isArchived])
+  @@map("conversation_participants")
+}
+
+/// Message unitaire.
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderId       String
+  sender         User         @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+
+  body        String  @db.Text
+  /// Pieces jointes : URLs Cloudinary/S3.
+  attachments String[] @default([])
+
+  editedAt  DateTime?
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([conversationId, createdAt])
+  @@index([senderId])
+  @@map("messages")
+}
+
+// =============================================================================
+// NOTIFICATIONS & AUDIT
+// =============================================================================
+
+model Notification {
+  id     String           @id @default(cuid())
+  userId String
+  user   User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type   NotificationType
+
+  title String  @db.VarChar(160)
+  body  String? @db.Text
+  /// Lien profond vers la ressource concernee.
+  href  String?
+  /// Donnees libres (jobId, applicationId...) pour le rendu cote client.
+  data  Json?
+
+  readAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, readAt, createdAt])
+  @@map("notifications")
+}
+
+/// Piste d'audit des actions sensibles : moderation d'offres, suspension de
+/// compte, activation manuelle d'abonnement.
+model AuditLog {
+  id      String  @id @default(cuid())
+  actorId String?
+  actor   User?   @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  action     String // JOB_APPROVED, JOB_REJECTED, USER_SUSPENDED, ...
+  entityType String // Job, User, Subscription, ...
+  entityId   String
+  metadata   Json?
+  ipAddress  String?
+
+  createdAt DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([actorId, createdAt])
+  @@map("audit_logs")
+}
