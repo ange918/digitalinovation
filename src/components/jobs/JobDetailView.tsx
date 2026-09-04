@@ -141,7 +141,7 @@ export function JobDetailView({ job, viewerRole, hasApplied }: JobDetailViewProp
                 </div>
               </div>
 
-              <h1 className="mt-6 max-w-3xl font-serif text-display-sm text-white sm:text-display-md">
+              <h1 className="mt-6 max-w-3xl font-bold text-display-sm text-white sm:text-display-md">
                 {job.title}
               </h1>
 
@@ -161,7 +161,7 @@ export function JobDetailView({ job, viewerRole, hasApplied }: JobDetailViewProp
               </div>
 
               {salary && (
-                <p className="mt-6 font-serif text-title-lg text-white tabular">{salary}</p>
+                <p className="mt-6 font-bold text-title-lg text-white tabular">{salary}</p>
               )}
 
               <dl className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-caption text-white/55">
@@ -274,7 +274,7 @@ export function JobDetailView({ job, viewerRole, hasApplied }: JobDetailViewProp
                   bordered={Boolean(job.company.coverUrl)}
                 />
 
-                <h2 className="mt-4 flex items-center gap-1.5 font-serif text-title-md text-midnight-900">
+                <h2 className="mt-4 flex items-center gap-1.5 font-bold text-title-md text-midnight-900">
                   {job.company.name}
                   {job.company.isVerified && (
                     <BadgeCheckIcon className="h-4 w-4 shrink-0 text-royal-500" />
@@ -368,7 +368,7 @@ export function JobDetailView({ job, viewerRole, hasApplied }: JobDetailViewProp
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="border-b border-line-subtle py-8 first:pt-0 last:border-0">
-      <h2 className="font-serif text-title-lg text-midnight-900">{title}</h2>
+      <h2 className="font-bold text-title-lg text-midnight-900">{title}</h2>
       <div className="mt-4">{children}</div>
     </section>
   );
@@ -441,7 +441,7 @@ function CompanyMark({
       aria-hidden="true"
       className={cn(
         classes,
-        'flex items-center justify-center bg-canvas-alt font-serif text-title-md text-midnight-400',
+        'flex items-center justify-center bg-canvas-alt font-semibold text-title-md text-midnight-400',
       )}
     >
       {name.charAt(0).toUpperCase()}

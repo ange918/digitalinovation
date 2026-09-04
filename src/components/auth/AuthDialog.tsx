@@ -164,7 +164,7 @@ export function AuthDialog() {
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 id="auth-title" className="font-serif text-title-lg text-midnight-900">
+            <h2 id="auth-title" className="font-bold text-title-lg text-midnight-900">
               {isSignup ? 'Rejoindre FASHLINK' : 'Content de vous revoir'}
             </h2>
             <p className="mt-1.5 text-body-sm text-ink-muted">

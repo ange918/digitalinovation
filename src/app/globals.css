@@ -28,13 +28,13 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* Grands titres : serif, jamais de graisse superieure a 400 —
-     DM Serif Display n'a qu'une graisse, l'effet vient de la taille. */
+  /* Grands titres en Genova. La graisse compte ici : contrairement a un serif
+     de labeur, une geometrique n'a pas de contraste de plein et delie — sans
+     `font-bold`, un grand titre parait mou et se confond avec le chapo. */
   h1, h2 {
-    @apply font-serif font-normal text-midnight-900;
+    @apply font-sans font-bold text-midnight-900;
   }
 
-  /* Titres secondaires : Poppins, la geometrie Susuni Lab prend le relais. */
   h3, h4, h5, h6 {
     @apply font-sans font-semibold text-midnight-900;
   }

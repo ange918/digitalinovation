@@ -24,7 +24,7 @@ export default async function ModerationPage() {
       <main className="container py-10">
         <header className="mb-8">
           <p className="fl-overline">Administration</p>
-          <h1 className="mt-2 font-serif text-display-sm text-midnight-900">
+          <h1 className="mt-2 font-bold text-display-sm text-midnight-900">
             Modération
           </h1>
           <p className="mt-2 max-w-2xl text-body text-ink-muted">
@@ -65,7 +65,7 @@ function StatTile({
       }
     >
       <dt className="fl-overline">{label}</dt>
-      <dd className="mt-2 font-serif text-display-sm text-midnight-900 tabular">{value}</dd>
+      <dd className="mt-2 font-bold text-display-sm text-midnight-900 tabular">{value}</dd>
     </div>
   );
 }

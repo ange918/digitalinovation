@@ -10,7 +10,7 @@ export default function NotFound() {
       <SiteHeader />
       <main className="container flex min-h-[60vh] flex-col items-center justify-center py-20 text-center">
         <p className="fl-overline text-royal-500">Erreur 404</p>
-        <h1 className="mt-4 font-serif text-display-md text-midnight-900">
+        <h1 className="mt-4 font-bold text-display-md text-midnight-900">
           Cette page n&apos;existe plus
         </h1>
         <p className="mt-4 max-w-md text-body text-ink-muted">

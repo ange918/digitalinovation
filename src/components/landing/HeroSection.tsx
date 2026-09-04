@@ -24,7 +24,7 @@ export function HeroSection() {
         <div className="max-w-3xl">
           <p className="fl-overline text-royal-600">Susuni Lab · Cotonou</p>
 
-          <h1 className="mt-6 font-serif text-display-md leading-[1.04] text-midnight-900 sm:text-display-lg">
+          <h1 className="mt-6 font-bold text-display-md leading-[1.04] text-midnight-900 sm:text-display-lg">
             La mode africaine
             <br />
             recrute ses <span className="text-royal-500">talents</span>.
