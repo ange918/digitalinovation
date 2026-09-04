@@ -14,7 +14,7 @@ export default function NotFound() {
           Cette page n&apos;existe plus
         </h1>
         <p className="mt-4 max-w-md text-body text-ink-muted">
-          L&apos;offre a peut-etre ete cloturee, ou l&apos;adresse est incorrecte.
+          L&apos;offre a peut-être été clôturée, ou l&apos;adresse est incorrecte.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <ButtonLink href="/offres">Voir les offres</ButtonLink>
@@ -22,7 +22,7 @@ export default function NotFound() {
             href="/"
             className="inline-flex h-10 items-center px-4 text-body-sm font-medium text-ink-muted hover:text-midnight-900"
           >
-            Retour a l&apos;accueil
+            Retour à l&apos;accueil
           </Link>
         </div>
       </main>

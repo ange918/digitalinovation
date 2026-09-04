@@ -28,13 +28,14 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* Titres : serif systematique, jamais de graisse superieure a 400 —
+  /* Grands titres : serif, jamais de graisse superieure a 400 —
      DM Serif Display n'a qu'une graisse, l'effet vient de la taille. */
-  h1, h2, h3 {
+  h1, h2 {
     @apply font-serif font-normal text-midnight-900;
   }
 
-  h4, h5, h6 {
+  /* Titres secondaires : Poppins, la geometrie Susuni Lab prend le relais. */
+  h3, h4, h5, h6 {
     @apply font-sans font-semibold text-midnight-900;
   }
 

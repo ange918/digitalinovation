@@ -97,7 +97,7 @@ export function JobDetailView({ job, viewerRole, hasApplied }: JobDetailViewProp
         />
 
         <div className="container relative py-12 sm:py-16">
-          <nav aria-label="Fil d'ariane" className="mb-8">
+          <nav aria-label="Fil d’Ariane" className="mb-8">
             <ol className="flex flex-wrap items-center gap-2 text-caption text-white/55">
               <li>
                 <Link href="/offres" className="transition-colors hover:text-white">
@@ -169,7 +169,7 @@ export function JobDetailView({ job, viewerRole, hasApplied }: JobDetailViewProp
                   <div className="flex items-center gap-1.5">
                     <ClockIcon className="h-3.5 w-3.5" />
                     <dt className="sr-only">Publiee</dt>
-                    <dd>Publiee {formatRelativeDate(job.publishedAt)}</dd>
+                    <dd>Publiée {formatRelativeDate(job.publishedAt)}</dd>
                   </div>
                 )}
                 <div className="flex items-center gap-1.5">
@@ -231,7 +231,7 @@ export function JobDetailView({ job, viewerRole, hasApplied }: JobDetailViewProp
             )}
 
             {job.requirements.length > 0 && (
-              <Section title="Profil recherche">
+              <Section title="Profil recherché">
                 <BulletList items={job.requirements} />
               </Section>
             )}
@@ -242,7 +242,7 @@ export function JobDetailView({ job, viewerRole, hasApplied }: JobDetailViewProp
               </Section>
             )}
 
-            <Section title="Categories">
+            <Section title="Catégories">
               <div className="flex flex-wrap gap-2">
                 <CategoryTag category={job.category} variant="full" />
                 {job.secondaryCategories.map((category) => (
@@ -289,7 +289,7 @@ export function JobDetailView({ job, viewerRole, hasApplied }: JobDetailViewProp
 
                 <dl className="mt-5 space-y-2.5 text-caption">
                   {job.company.city && (
-                    <InfoRow icon={<MapPinIcon className="h-3.5 w-3.5" />} label="Siege">
+                    <InfoRow icon={<MapPinIcon className="h-3.5 w-3.5" />} label="Siège">
                       {job.company.city}
                     </InfoRow>
                   )}

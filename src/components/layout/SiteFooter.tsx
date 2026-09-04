@@ -3,30 +3,33 @@ import Link from 'next/link';
 import { Wordmark } from '@/components/layout/SiteHeader';
 import { CATEGORIES, CATEGORY_ORDER } from '@/lib/constants';
 
+/**
+ * Liens du pied de page.
+ * Uniquement des ancres de la landing et des pages qui existent : aucun 404.
+ */
 const COLUMNS = [
   {
     title: 'Talents',
     links: [
       { href: '/offres', label: 'Parcourir les offres' },
-      { href: '/inscription?role=talent', label: 'Creer mon profil' },
-      { href: '/talent/candidatures', label: 'Mes candidatures' },
+      { href: '/?auth=inscription&role=talent', label: 'Créer mon profil' },
+      { href: '/#avantages', label: 'Pourquoi s\u2019inscrire' },
     ],
   },
   {
     title: 'Maisons',
     links: [
-      { href: '/inscription?role=recruteur', label: 'Publier une offre' },
-      { href: '/tarifs', label: 'Nos formules' },
-      { href: '/talents', label: 'Chercher un talent' },
+      { href: '/?auth=inscription&role=recruteur', label: 'Publier une offre' },
+      { href: '/#tarifs', label: 'Nos formules' },
+      { href: '/#fonctionnement', label: 'Comment ça marche' },
     ],
   },
   {
     title: 'FASHLINK',
     links: [
-      { href: '/a-propos', label: 'A propos' },
-      { href: '/contact', label: 'Contact' },
-      { href: '/mentions-legales', label: 'Mentions legales' },
-      { href: '/confidentialite', label: 'Confidentialite' },
+      { href: '/#faq', label: 'Questions fréquentes' },
+      { href: '/#categories', label: 'Les six métiers' },
+      { href: '/?auth=connexion', label: 'Se connecter' },
     ],
   },
 ];
@@ -46,7 +49,7 @@ export function SiteFooter() {
               Un projet{' '}
               <span className="font-medium text-midnight-900">Susuni Lab</span>
               <br />
-              Cotonou, Benin
+              Cotonou, Bénin
             </p>
           </div>
 
@@ -70,7 +73,7 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-12 border-t border-line-subtle pt-8">
-          <h2 className="fl-overline">Les six metiers</h2>
+          <h2 className="fl-overline">Les six métiers</h2>
           <ul className="mt-3 flex flex-wrap gap-x-6 gap-y-2">
             {CATEGORY_ORDER.map((code) => (
               <li key={code}>
@@ -86,7 +89,7 @@ export function SiteFooter() {
         </div>
 
         <p className="mt-10 text-caption text-ink-faint">
-          © {new Date().getFullYear()} FASHLINK — Susuni Lab. Tous droits reserves.
+          © {new Date().getFullYear()} FASHLINK — Susuni Lab. Tous droits réservés.
         </p>
       </div>
     </footer>

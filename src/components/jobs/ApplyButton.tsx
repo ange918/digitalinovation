@@ -53,7 +53,7 @@ export function ApplyButton({
   if (viewerRole === null) {
     return (
       <ButtonLink
-        href={`/connexion?next=${encodeURIComponent(`/offres/${jobSlug}`)}`}
+        href={`/?auth=connexion&next=${encodeURIComponent(`/offres/${jobSlug}`)}`}
         size="lg"
         className={width}
       >
@@ -65,7 +65,7 @@ export function ApplyButton({
   if (viewerRole !== 'TALENT') {
     return (
       <Button variant="secondary" size="lg" className={width} disabled>
-        Reserve aux talents
+        Réservé aux talents
       </Button>
     );
   }
@@ -75,7 +75,7 @@ export function ApplyButton({
       <div className={cn('flex flex-col gap-2', width)}>
         <Button variant="success" size="lg" className={width} disabled>
           <CheckIcon className="h-4 w-4" />
-          Candidature envoyee
+          Candidature envoyée
         </Button>
         <button
           type="button"

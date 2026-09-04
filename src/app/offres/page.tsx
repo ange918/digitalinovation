@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils';
 export const metadata: Metadata = {
   title: 'Offres d’emploi, stage et freelance dans la mode',
   description:
-    'Toutes les offres publiees sur FASHLINK : emploi, stage et missions freelance dans la mode en Afrique francophone.',
+    'Toutes les offres publiées sur FASHLINK : emploi, stage et missions freelance dans la mode en Afrique francophone.',
 };
 
 export const dynamic = 'force-dynamic';
@@ -80,7 +80,7 @@ export default async function JobsPage({ searchParams }: PageProps) {
             <p className="mt-3 max-w-xl text-body text-ink-muted">
               {category
                 ? CATEGORIES[category].description
-                : 'Emploi, stage et missions freelance dans l’ecosysteme de la mode.'}
+                : 'Emploi, stage et missions freelance dans l’écosystème de la mode.'}
             </p>
 
             <form method="get" className="mt-8 flex max-w-xl gap-3">
@@ -92,7 +92,7 @@ export default async function JobsPage({ searchParams }: PageProps) {
                   type="search"
                   name="q"
                   defaultValue={query}
-                  placeholder="Metier, competence, maison..."
+                  placeholder="Métier, compétence, maison…"
                   className="h-11 w-full rounded-pill border border-line bg-canvas pl-11 pr-4 text-body-sm focus:border-royal-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-royal-500/20"
                 />
               </label>
@@ -141,14 +141,14 @@ export default async function JobsPage({ searchParams }: PageProps) {
         <div className="container py-12">
           {failed ? (
             <p className="rounded-card border border-dashed border-line py-20 text-center text-body-sm text-ink-subtle">
-              Les offres sont momentanement indisponibles. Reessayez dans un instant.
+              Les offres sont momentanément indisponibles. Réessayez dans un instant.
             </p>
           ) : jobs.length === 0 ? (
             <div className="rounded-card border border-dashed border-line py-20 text-center">
               <p className="font-serif text-title-lg text-midnight-900">Aucune offre</p>
               <p className="mx-auto mt-2 max-w-sm text-body-sm text-ink-muted">
-                Aucune offre ne correspond a votre recherche. Elargissez les criteres
-                ou revenez bientot.
+                Aucune offre ne correspond à votre recherche. Élargissez les critères
+                ou revenez bientôt.
               </p>
             </div>
           ) : (

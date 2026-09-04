@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { DM_Serif_Display, Plus_Jakarta_Sans } from 'next/font/google';
+import { DM_Serif_Display, Poppins } from 'next/font/google';
 
 import './globals.css';
 
@@ -7,6 +7,9 @@ import './globals.css';
  * Polices auto-hebergees par next/font : aucun appel a fonts.googleapis.com au
  * runtime, donc pas de round-trip DNS supplementaire sur un reseau lent, et
  * zero decalage de mise en page grace au `size-adjust` genere.
+ *
+ * DM Serif Display reste reserve aux tres grands titres (h1, h2) : c'est la
+ * signature editoriale FASHLINK. Tout le reste passe en Poppins.
  */
 const dmSerif = DM_Serif_Display({
   subsets: ['latin'],
@@ -15,11 +18,15 @@ const dmSerif = DM_Serif_Display({
   variable: '--font-dm-serif',
 });
 
-const jakarta = Plus_Jakarta_Sans({
+/**
+ * Poppins : sans-serif geometrique alignee sur l'identite Susuni Lab.
+ * Porte toute l'interface — boutons, cartes, tarifs, corps de texte.
+ */
+const poppins = Poppins({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+  weight: ['400', '500', '600', '700', '800'],
   display: 'swap',
-  variable: '--font-jakarta',
+  variable: '--font-poppins',
 });
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
@@ -31,7 +38,7 @@ export const metadata: Metadata = {
     template: '%s · FASHLINK',
   },
   description:
-    "La plateforme qui relie les talents et les maisons de mode en Afrique francophone. Emploi, stage et missions freelance, de la matiere a la communication.",
+    "La plateforme qui relie les talents et les maisons de mode en Afrique francophone. Emploi, stage et missions freelance, de la matière à la communication.",
   applicationName: 'FASHLINK',
   authors: [{ name: 'Susuni Lab', url: 'https://susunilab.com' }],
   keywords: [
@@ -65,7 +72,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={`${dmSerif.variable} ${jakarta.variable}`}>
+    <html lang="fr" className={`${dmSerif.variable} ${poppins.variable}`}>
       <body className="min-h-screen bg-canvas antialiased">
         {/* Lien d'evitement : premiere tabulation pour les lecteurs d'ecran. */}
         <a

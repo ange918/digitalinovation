@@ -87,10 +87,10 @@ module.exports = {
       },
 
       fontFamily: {
-        // DM Serif Display : titres forts, signature editoriale.
+        // DM Serif Display : reserve aux h1/h2, signature editoriale.
         serif: ['var(--font-dm-serif)', 'Georgia', 'Cambria', 'serif'],
-        // Plus Jakarta Sans : interface et corps de texte.
-        sans: ['var(--font-jakarta)', 'Inter', 'system-ui', 'sans-serif'],
+        // Poppins : geometrique, alignee sur l'identite Susuni Lab.
+        sans: ['var(--font-poppins)', 'Inter', 'system-ui', 'sans-serif'],
       },
 
       fontSize: {
@@ -102,8 +102,8 @@ module.exports = {
         'title-lg': ['1.625rem', { lineHeight: '1.25', letterSpacing: '-0.01em' }],
         'title-md': ['1.25rem', { lineHeight: '1.35', letterSpacing: '-0.005em' }],
         'body-lg': ['1.0625rem', { lineHeight: '1.7' }],
-        body: ['0.9375rem', { lineHeight: '1.65' }],
-        'body-sm': ['0.875rem', { lineHeight: '1.6' }],
+        body: ['0.96875rem', { lineHeight: '1.68' }],
+        'body-sm': ['0.90625rem', { lineHeight: '1.62' }],
         caption: ['0.8125rem', { lineHeight: '1.5' }],
         // Micro-label majuscule : categories, eyebrows, meta.
         overline: ['0.6875rem', { lineHeight: '1.4', letterSpacing: '0.14em' }],

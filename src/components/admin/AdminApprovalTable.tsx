@@ -120,7 +120,7 @@ export function AdminApprovalTable({ jobs }: AdminApprovalTableProps) {
           <p className="mt-1 text-body-sm text-ink-muted">
             {remaining === 0
               ? 'Aucune offre en attente. La file est vide.'
-              : `${remaining} offre${remaining > 1 ? 's' : ''} en attente de decision.`}
+              : `${remaining} offre${remaining > 1 ? 's' : ''} en attente de décision.`}
           </p>
         </div>
 
@@ -131,7 +131,7 @@ export function AdminApprovalTable({ jobs }: AdminApprovalTableProps) {
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Titre ou maison..."
+            placeholder="Titre ou maison…"
             className={cn(
               'h-10 w-full rounded-pill border border-line bg-canvas pl-9 pr-4',
               'text-body-sm text-midnight-900 placeholder:text-ink-faint',
@@ -164,10 +164,10 @@ export function AdminApprovalTable({ jobs }: AdminApprovalTableProps) {
                 <tr className="border-b border-line">
                   <Th className="pl-6">Offre</Th>
                   <Th>Maison</Th>
-                  <Th>Categorie</Th>
-                  <Th>Remuneration</Th>
+                  <Th>Catégorie</Th>
+                  <Th>Rémunération</Th>
                   <Th>Soumise</Th>
-                  <Th className="pr-6 text-right">Decision</Th>
+                  <Th className="pr-6 text-right">Décision</Th>
                 </tr>
               </thead>
               <tbody>
@@ -220,7 +220,7 @@ export function AdminApprovalTable({ jobs }: AdminApprovalTableProps) {
                           job.salaryMaxXof,
                           job.salaryPeriod,
                           job.showSalary,
-                        ) ?? <span className="text-ink-faint">Non communiquee</span>}
+                        ) ?? <span className="text-ink-faint">Non communiquée</span>}
                       </td>
 
                       <td className="py-4 pr-4 text-caption text-ink-subtle">
@@ -318,12 +318,12 @@ function RowActions({
     return state.action === 'approved' ? (
       <Badge tone="success">
         <CheckIcon className="h-3 w-3" />
-        Publiee
+        Publiée
       </Badge>
     ) : (
       <Badge tone="danger">
         <XIcon className="h-3 w-3" />
-        Rejetee
+        Rejetée
       </Badge>
     );
   }
@@ -367,10 +367,10 @@ function RejectDialog({
   onConfirm: (reason: string) => void;
 }) {
   const presets = [
-    'Description trop succincte : precisez les missions et le profil recherche.',
-    'La remuneration annoncee ne respecte pas le salaire minimum en vigueur.',
-    'Offre hors du perimetre mode couvert par FASHLINK.',
-    'Coordonnees de contact direct dans le texte : les echanges passent par la messagerie FASHLINK.',
+    'Description trop succincte : précisez les missions et le profil recherché.',
+    'La rémunération annoncée ne respecte pas le salaire minimum en vigueur.',
+    'Offre hors du périmètre mode couvert par FASHLINK.',
+    'Coordonnées de contact direct dans le texte : les échanges passent par la messagerie FASHLINK.',
   ];
   const [reason, setReason] = useState('');
 
@@ -390,7 +390,7 @@ function RejectDialog({
         </p>
 
         <div className="mt-5">
-          <p className="fl-overline">Motifs frequents</p>
+          <p className="fl-overline">Motifs fréquents</p>
           <div className="mt-2 flex flex-wrap gap-2">
             {presets.map((preset) => (
               <button
@@ -422,7 +422,7 @@ function RejectDialog({
               'text-body-sm text-midnight-900 placeholder:text-ink-faint',
               'focus:border-royal-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-royal-500/20',
             )}
-            placeholder="Expliquez precisement ce qui doit etre corrige."
+            placeholder="Expliquez précisément ce qui doit être corrigé."
           />
         </label>
 
@@ -461,12 +461,12 @@ function EmptyState({ hasQuery }: { hasQuery: boolean }) {
         <CheckIcon className="h-5 w-5" />
       </span>
       <p className="mt-4 font-serif text-title-md text-midnight-900">
-        {hasQuery ? 'Aucun resultat' : 'File vide'}
+        {hasQuery ? 'Aucun résultat' : 'File vide'}
       </p>
       <p className="mx-auto mt-1.5 max-w-sm text-body-sm text-ink-muted">
         {hasQuery
-          ? 'Aucune offre en attente ne correspond a cette recherche.'
-          : 'Toutes les offres soumises ont ete traitees. Les nouvelles arriveront ici.'}
+          ? 'Aucune offre en attente ne correspond à cette recherche.'
+          : 'Toutes les offres soumises ont été traitées. Les nouvelles arriveront ici.'}
       </p>
     </div>
   );

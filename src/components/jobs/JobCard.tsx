@@ -92,7 +92,7 @@ export function JobCard({ job, isSaved = false, onToggleSave, className }: JobCa
               <span className="truncate">{job.company.name}</span>
               {job.company.isVerified && (
                 <span
-                  title="Entreprise verifiee par FASHLINK"
+                  title="Entreprise vérifiée par FASHLINK"
                   className="shrink-0 text-royal-500"
                 >
                   <VerifiedMark />
@@ -113,7 +113,7 @@ export function JobCard({ job, isSaved = false, onToggleSave, className }: JobCa
             type="button"
             onClick={onToggleSave}
             aria-pressed={isSaved}
-            aria-label={isSaved ? "Retirer l'offre des favoris" : "Enregistrer l'offre"}
+            aria-label={isSaved ? "Retirer l’offre des favoris" : "Enregistrer l’offre"}
             className={cn(
               'relative z-10 -m-1.5 shrink-0 rounded-pill p-1.5',
               'transition-colors duration-150 ease-editorial',
@@ -169,7 +169,7 @@ export function JobCard({ job, isSaved = false, onToggleSave, className }: JobCa
           {job.isFeatured && (
             <Badge tone="info" className="gap-1">
               <SparkIcon className="h-3 w-3" />
-              A la une
+              À la une
             </Badge>
           )}
         </div>

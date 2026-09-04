@@ -16,7 +16,7 @@ const checkoutSchema = z.object({
   /** Obligatoire pour MTN MoMo : le push USSD part sur ce numero. */
   phone: z
     .string()
-    .regex(/^\+[1-9]\d{7,14}$/, 'Numero attendu au format international.')
+    .regex(/^\+[1-9]\d{7,14}$/, 'Numéro attendu au format international.')
     .optional(),
 });
 
@@ -35,7 +35,7 @@ export async function createCheckoutAction(
     const recruiter = await requireRecruiter();
 
     if (parsed.provider === 'MTN_MOMO' && !parsed.phone) {
-      return { ok: false, error: 'Renseignez votre numero MTN MoMo.' };
+      return { ok: false, error: 'Renseignez votre numéro MTN MoMo.' };
     }
 
     const plan = await getPlan(parsed.tier);
@@ -43,7 +43,7 @@ export async function createCheckoutAction(
       parsed.cycle === 'YEARLY' ? (plan.priceYearlyXof ?? plan.priceXof * 12) : plan.priceXof;
 
     if (amountXof <= 0) {
-      return { ok: false, error: 'Ce palier ne necessite pas de paiement.' };
+      return { ok: false, error: 'Ce palier ne nécessite pas de paiement.' };
     }
 
     const company = await prisma.company.findUnique({
@@ -89,7 +89,7 @@ export async function createCheckoutAction(
 
     return { ok: true, data: { paymentUrl: session.paymentUrl, reference } };
   } catch (error) {
-    return actionError(error, "L'initialisation du paiement a echoue.");
+    return actionError(error, "L’initialisation du paiement a échoué.");
   }
 }
 
@@ -147,6 +147,6 @@ export async function cancelSubscriptionAction(): Promise<ActionResult> {
 
     return { ok: true };
   } catch (error) {
-    return actionError(error, 'La resiliation a echoue.');
+    return actionError(error, 'La résiliation a échoué.');
   }
 }

@@ -21,21 +21,21 @@ export const CATEGORIES: Record<
 > = {
   MAT: {
     code: 'MAT',
-    label: 'Matieres & Textiles',
-    short: 'Matieres',
+    label: 'Matières & Textiles',
+    short: 'Matières',
     description:
-      'Sourcing de tissus, teinture, wax et bogolan, controle qualite matiere, negoce textile.',
+      'Sourcing de tissus, teinture, wax et bogolan, contrôle qualité matière, négoce textile.',
   },
   PRO: {
     code: 'PRO',
     label: 'Production & Confection',
     short: 'Production',
     description:
-      'Modelisme, patronage, coupe, couture, broderie, supervision d’atelier et industrialisation.',
+      'Modélisme, patronage, coupe, couture, broderie, supervision d’atelier et industrialisation.',
   },
   DEC: {
     code: 'DEC',
-    label: 'Design & Creation',
+    label: 'Design & Création',
     short: 'Design',
     description:
       'Direction de collection, stylisme, illustration de mode, recherche de tendances.',
@@ -66,21 +66,21 @@ export const CATEGORIES: Record<
 export const CATEGORY_ORDER: Category[] = ['MAT', 'PRO', 'DEC', 'ACC', 'IMG', 'COM'];
 
 export const JOB_TYPES: Record<JobType, { label: string; description: string }> = {
-  EMPLOI: { label: 'Emploi', description: 'Contrat a duree determinee ou indeterminee.' },
-  STAGE: { label: 'Stage', description: 'Stage conventionne ou d’immersion.' },
-  FREELANCE: { label: 'Freelance', description: 'Mission ponctuelle facturee a la prestation.' },
+  EMPLOI: { label: 'Emploi', description: 'Contrat à durée déterminée ou indéterminée.' },
+  STAGE: { label: 'Stage', description: 'Stage conventionné ou d’immersion.' },
+  FREELANCE: { label: 'Freelance', description: 'Mission ponctuelle facturée à la prestation.' },
 };
 
 export const WORK_MODES: Record<WorkMode, { label: string }> = {
   SUR_SITE: { label: 'Sur site' },
   HYBRIDE: { label: 'Hybride' },
-  DISTANCIEL: { label: 'A distance' },
+  DISTANCIEL: { label: 'À distance' },
 };
 
 export const EXPERIENCE_LEVELS: Record<ExperienceLevel, { label: string; years: string }> = {
-  DEBUTANT: { label: 'Debutant', years: '0 – 1 an' },
+  DEBUTANT: { label: 'Débutant', years: '0 – 1 an' },
   JUNIOR: { label: 'Junior', years: '1 – 3 ans' },
-  CONFIRME: { label: 'Confirme', years: '3 – 6 ans' },
+  CONFIRME: { label: 'Confirmé', years: '3 – 6 ans' },
   SENIOR: { label: 'Senior', years: '6 ans et +' },
 };
 
@@ -92,10 +92,10 @@ export const JOB_STATUSES: Record<
   DRAFT: { label: 'Brouillon', tone: 'neutral' },
   PENDING_VALIDATION: { label: 'En attente de validation', tone: 'warning' },
   ACTIVE: { label: 'En ligne', tone: 'success' },
-  REJECTED: { label: 'Rejetee', tone: 'danger' },
-  CLOSED: { label: 'Cloturee', tone: 'neutral' },
-  EXPIRED: { label: 'Expiree', tone: 'neutral' },
-  ARCHIVED: { label: 'Archivee', tone: 'neutral' },
+  REJECTED: { label: 'Rejetée', tone: 'danger' },
+  CLOSED: { label: 'Clôturée', tone: 'neutral' },
+  EXPIRED: { label: 'Expirée', tone: 'neutral' },
+  ARCHIVED: { label: 'Archivée', tone: 'neutral' },
 };
 
 /** Etapes du suivi de candidature, dans l'ordre du pipeline recruteur. */
@@ -103,14 +103,14 @@ export const APPLICATION_STATUSES: Record<
   ApplicationStatus,
   { label: string; tone: 'neutral' | 'info' | 'success' | 'warning' | 'danger'; step: number }
 > = {
-  SUBMITTED: { label: 'Candidature envoyee', tone: 'info', step: 1 },
-  VIEWED: { label: 'Consultee', tone: 'info', step: 2 },
-  SHORTLISTED: { label: 'Preselectionne', tone: 'info', step: 3 },
+  SUBMITTED: { label: 'Candidature envoyée', tone: 'info', step: 1 },
+  VIEWED: { label: 'Consultée', tone: 'info', step: 2 },
+  SHORTLISTED: { label: 'Présélectionné', tone: 'info', step: 3 },
   INTERVIEW: { label: 'Entretien', tone: 'warning', step: 4 },
   OFFER: { label: 'Proposition', tone: 'success', step: 5 },
-  HIRED: { label: 'Recrute', tone: 'success', step: 6 },
+  HIRED: { label: 'Recruté', tone: 'success', step: 6 },
   REJECTED: { label: 'Non retenue', tone: 'danger', step: 0 },
-  WITHDRAWN: { label: 'Retiree', tone: 'neutral', step: 0 },
+  WITHDRAWN: { label: 'Retirée', tone: 'neutral', step: 0 },
 };
 
 /**
@@ -159,10 +159,10 @@ export const PLAN_CATALOG: Record<
     canSearchTalents: false,
     canExportApplications: false,
     hasPrioritySupport: false,
-    pitch: 'Pour publier une premiere offre et tester la plateforme.',
+    pitch: 'Pour publier une première offre et tester la plateforme.',
     features: [
-      '1 offre active a la fois',
-      'Reception des candidatures',
+      '1 offre active à la fois',
+      'Réception des candidatures',
       'Messagerie avec les candidats',
       'Fiche entreprise publique',
     ],
@@ -177,9 +177,9 @@ export const PLAN_CATALOG: Record<
     canSearchTalents: true,
     canExportApplications: true,
     hasPrioritySupport: false,
-    pitch: 'Pour les maisons et ateliers qui recrutent regulierement.',
+    pitch: 'Pour les maisons et ateliers qui recrutent régulièrement.',
     features: [
-      '10 offres actives simultanement',
+      '10 offres actives simultanément',
       '2 mises en avant par mois',
       'Recherche dans la base de talents',
       'Export des candidatures (CSV)',
@@ -198,7 +198,7 @@ export const PLAN_CATALOG: Record<
     hasPrioritySupport: true,
     pitch: 'Pour les groupes et les campagnes de recrutement continues.',
     features: [
-      'Offres actives illimitees',
+      'Offres actives illimitées',
       '10 mises en avant par mois',
       'Recherche et contact direct des talents',
       'Export des candidatures (CSV)',

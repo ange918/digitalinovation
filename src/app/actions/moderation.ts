@@ -114,7 +114,7 @@ export async function approveJobAction(
 
     return { ok: true, data: { slug: job.slug } };
   } catch (error) {
-    return actionError(error, 'La validation de l’offre a echoue.');
+    return actionError(error, 'La validation de l’offre a échoué.');
   }
 }
 
@@ -124,7 +124,7 @@ const rejectSchema = z.object({
    * Motif obligatoire : il part tel quel au recruteur, qui doit pouvoir
    * corriger sans nous ecrire.
    */
-  reason: z.string().min(10, 'Le motif doit compter au moins 10 caracteres.').max(2000),
+  reason: z.string().min(10, 'Le motif doit compter au moins 10 caractères.').max(2000),
 });
 
 /** Rejet d'une offre, avec motif transmis au recruteur. */
@@ -194,7 +194,7 @@ export async function rejectJobAction(
     revalidatePath('/admin/moderation');
     return { ok: true };
   } catch (error) {
-    return actionError(error, 'Le rejet de l’offre a echoue.');
+    return actionError(error, 'Le rejet de l’offre a échoué.');
   }
 }
 
@@ -255,7 +255,7 @@ export async function suspendUserAction(
     revalidatePath('/admin/comptes');
     return { ok: true };
   } catch (error) {
-    return actionError(error, 'La suspension du compte a echoue.');
+    return actionError(error, 'La suspension du compte a échoué.');
   }
 }
 
@@ -289,6 +289,6 @@ export async function setCompanyVerifiedAction(
     revalidatePath('/admin/entreprises');
     return { ok: true };
   } catch (error) {
-    return actionError(error, 'La mise a jour du badge a echoue.');
+    return actionError(error, 'La mise à jour du badge a échoué.');
   }
 }

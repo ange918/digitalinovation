@@ -19,7 +19,7 @@ import { shortId, slugify } from '@/lib/utils';
 
 const passwordRule = z
   .string()
-  .min(10, 'Le mot de passe doit compter au moins 10 caracteres.')
+  .min(10, 'Le mot de passe doit compter au moins 10 caractères.')
   .regex(/[a-z]/, 'Ajoutez au moins une minuscule.')
   .regex(/[A-Z]/, 'Ajoutez au moins une majuscule.')
   .regex(/[0-9]/, 'Ajoutez au moins un chiffre.');
@@ -27,7 +27,7 @@ const passwordRule = z
 // Numeros beninois et internationaux au format E.164.
 const phoneRule = z
   .string()
-  .regex(/^\+[1-9]\d{7,14}$/, 'Numero attendu au format international, ex. +22997000000.');
+  .regex(/^\+[1-9]\d{7,14}$/, 'Numéro attendu au format international, ex. +22997000000.');
 
 const registerSchema = z
   .object({
@@ -41,7 +41,7 @@ const registerSchema = z
     companyName: z.string().min(2).max(160).optional(),
   })
   .refine((data) => data.role !== 'RECRUITER' || Boolean(data.companyName), {
-    message: "Le nom de l'entreprise est obligatoire pour un compte recruteur.",
+    message: "Le nom de l’entreprise est obligatoire pour un compte recruteur.",
     path: ['companyName'],
   });
 
@@ -63,7 +63,23 @@ export async function registerAction(
     });
 
     if (existing) {
-      return { ok: false, error: 'Un compte existe deja avec cette adresse.' };
+      return { ok: false, error: 'Un compte existe déjà avec cette adresse.' };
+    }
+
+    // `phone` est unique en base : on le verifie ici pour donner un message
+    // utile plutot que de laisser remonter la violation de contrainte.
+    if (parsed.phone) {
+      const phoneTaken = await prisma.user.findUnique({
+        where: { phone: parsed.phone },
+        select: { id: true },
+      });
+
+      if (phoneTaken) {
+        return {
+          ok: false,
+          error: 'Ce numéro de téléphone est déjà rattaché à un autre compte.',
+        };
+      }
     }
 
     const passwordHash = await hashPassword(parsed.password);
@@ -105,7 +121,7 @@ export async function registerAction(
     await issueSession(user.id, user.email, user.role);
     return { ok: true, data: { userId: user.id } };
   } catch (error) {
-    return actionError(error, "L'inscription a echoue.");
+    return actionError(error, "L’inscription a échoué.");
   }
 }
 
@@ -146,10 +162,10 @@ export async function loginAction(
     if (!valid) return invalid;
 
     if (user.status === 'SUSPENDED') {
-      return { ok: false, error: 'Ce compte est suspendu. Contactez l’equipe FASHLINK.' };
+      return { ok: false, error: 'Ce compte est suspendu. Contactez l’équipe FASHLINK.' };
     }
     if (user.status === 'DEACTIVATED') {
-      return { ok: false, error: 'Ce compte est desactive.' };
+      return { ok: false, error: 'Ce compte est désactivé.' };
     }
 
     await prisma.user.update({
@@ -160,7 +176,7 @@ export async function loginAction(
     await issueSession(user.id, user.email, user.role);
     return { ok: true, data: { role: user.role } };
   } catch (error) {
-    return actionError(error, 'La connexion a echoue.');
+    return actionError(error, 'La connexion a échoué.');
   }
 }
 

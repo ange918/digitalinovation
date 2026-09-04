@@ -7,7 +7,7 @@ import { getCurrentUser, type CurrentUser } from '@/lib/auth';
 
 /** Erreur metier : refus d'acces explicite, distinguee d'un bug. */
 export class ForbiddenError extends Error {
-  constructor(message = 'Acces refuse.') {
+  constructor(message = 'Accès refusé.') {
     super(message);
     this.name = 'ForbiddenError';
   }
@@ -45,7 +45,7 @@ export async function requireRecruiter(): Promise<CurrentUser & { companyId: str
   const user = await requireRole('RECRUITER');
   if (!user.companyId) {
     throw new ForbiddenError(
-      'Completez la fiche de votre entreprise avant de publier une offre.',
+      'Complétez la fiche de votre entreprise avant de publier une offre.',
     );
   }
   return user as CurrentUser & { companyId: string };

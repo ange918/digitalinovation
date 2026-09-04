@@ -40,7 +40,7 @@ export async function applyToJobAction(
     });
 
     if (!job) {
-      return { ok: false, error: "Cette offre n'est plus disponible." };
+      return { ok: false, error: "Cette offre n’est plus disponible." };
     }
 
     if (job.expiresAt && job.expiresAt.getTime() < Date.now()) {
@@ -53,7 +53,7 @@ export async function applyToJobAction(
     });
 
     if (existing) {
-      return { ok: false, error: 'Vous avez deja postule a cette offre.' };
+      return { ok: false, error: 'Vous avez déjà postulé à cette offre.' };
     }
 
     // Le CV est fige au moment de l'envoi : le talent peut le mettre a jour
@@ -105,7 +105,7 @@ export async function applyToJobAction(
 
     return { ok: true };
   } catch (error) {
-    return actionError(error, "L'envoi de la candidature a echoue.");
+    return actionError(error, "L’envoi de la candidature a échoué.");
   }
 }
 
@@ -159,7 +159,7 @@ export async function withdrawApplicationAction(
     revalidatePath('/talent/candidatures');
     return { ok: true };
   } catch (error) {
-    return actionError(error, 'Le retrait de la candidature a echoue.');
+    return actionError(error, 'Le retrait de la candidature a échoué.');
   }
 }
 
@@ -210,7 +210,7 @@ export async function updateApplicationStatusAction(
 
     const isOwner = application.job.company.userId === user.id;
     if (!isOwner && user.role !== 'ADMIN') {
-      return { ok: false, error: 'Vous ne gerez pas cette offre.' };
+      return { ok: false, error: 'Vous ne gérez pas cette offre.' };
     }
 
     if (!APPLICATION_TRANSITIONS[application.status].includes(parsed.status)) {
@@ -261,6 +261,6 @@ export async function updateApplicationStatusAction(
     revalidatePath(`/recruteur/offres/${application.job.id}/candidatures`);
     return { ok: true };
   } catch (error) {
-    return actionError(error, 'La mise a jour de la candidature a echoue.');
+    return actionError(error, 'La mise à jour de la candidature a échoué.');
   }
 }

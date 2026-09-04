@@ -13,8 +13,8 @@ const CATEGORY = z.enum(['MAT', 'PRO', 'DEC', 'ACC', 'IMG', 'COM']);
 
 const jobSchema = z
   .object({
-    title: z.string().min(8, 'Le titre doit compter au moins 8 caracteres.').max(160),
-    description: z.string().min(120, 'Decrivez le poste en 120 caracteres minimum.'),
+    title: z.string().min(8, 'Le titre doit compter au moins 8 caractères.').max(160),
+    description: z.string().min(120, 'Décrivez le poste en 120 caractères minimum.'),
     missions: z.array(z.string().min(3)).max(15).default([]),
     requirements: z.array(z.string().min(3)).max(15).default([]),
     benefits: z.array(z.string().min(3)).max(10).default([]),
@@ -36,10 +36,10 @@ const jobSchema = z
       data.salaryMinXof == null ||
       data.salaryMaxXof == null ||
       data.salaryMinXof <= data.salaryMaxXof,
-    { message: 'Le salaire minimum ne peut pas depasser le maximum.', path: ['salaryMinXof'] },
+    { message: 'Le salaire minimum ne peut pas dépasser le maximum.', path: ['salaryMinXof'] },
   )
   .refine((data) => !data.secondaryCategories.includes(data.category), {
-    message: 'Une categorie secondaire ne peut pas repeter la categorie principale.',
+    message: 'Une catégorie secondaire ne peut pas répéter la catégorie principale.',
     path: ['secondaryCategories'],
   });
 
@@ -79,7 +79,7 @@ export async function createJobAction(
 
     return { ok: true, data: { jobId: job.id, status: job.status } };
   } catch (error) {
-    return actionError(error, "La creation de l'offre a echoue.");
+    return actionError(error, "La création de l’offre a échoué.");
   }
 }
 
@@ -105,7 +105,7 @@ export async function updateJobAction(
 
     if (!job) return { ok: false, error: 'Offre introuvable.' };
     if (job.status === 'CLOSED' || job.status === 'ARCHIVED') {
-      return { ok: false, error: 'Une offre cloturee ne peut plus etre modifiee.' };
+      return { ok: false, error: 'Une offre clôturée ne peut plus être modifiée.' };
     }
 
     const requiresRevalidation = job.status === 'ACTIVE' || job.status === 'REJECTED';
@@ -134,7 +134,7 @@ export async function updateJobAction(
 
     return { ok: true };
   } catch (error) {
-    return actionError(error, "La mise a jour de l'offre a echoue.");
+    return actionError(error, "La mise à jour de l’offre a échoué.");
   }
 }
 
@@ -155,7 +155,7 @@ export async function submitJobForReviewAction(
 
     if (!job) return { ok: false, error: 'Offre introuvable.' };
     if (job.status !== 'DRAFT' && job.status !== 'REJECTED') {
-      return { ok: false, error: 'Seul un brouillon ou une offre rejetee peut etre soumis.' };
+      return { ok: false, error: 'Seul un brouillon ou une offre rejetée peut être soumis.' };
     }
 
     await assertCanPublishJob(recruiter.companyId);
@@ -169,7 +169,7 @@ export async function submitJobForReviewAction(
     revalidatePath('/admin/moderation');
     return { ok: true };
   } catch (error) {
-    return actionError(error, 'La soumission a echoue.');
+    return actionError(error, 'La soumission a échoué.');
   }
 }
 
@@ -207,7 +207,7 @@ export async function closeJobAction(
     revalidatePath(`/offres/${job.slug}`);
     return { ok: true };
   } catch (error) {
-    return actionError(error, 'La cloture a echoue.');
+    return actionError(error, 'La clôture a échoué.');
   }
 }
 
@@ -237,6 +237,6 @@ export async function toggleSaveJobAction(
     revalidatePath('/talent/favoris');
     return { ok: true, data: { saved: true } };
   } catch (error) {
-    return actionError(error, "L'enregistrement a echoue.");
+    return actionError(error, "L’enregistrement a échoué.");
   }
 }

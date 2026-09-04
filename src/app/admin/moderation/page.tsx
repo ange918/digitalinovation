@@ -5,7 +5,7 @@ import { SiteHeader } from '@/components/layout/SiteHeader';
 import { prisma } from '@/lib/prisma';
 import { requirePage } from '@/lib/rbac';
 
-export const metadata: Metadata = { title: 'Moderation des offres' };
+export const metadata: Metadata = { title: 'Modération des offres' };
 export const dynamic = 'force-dynamic';
 
 /** Espace admin : file de validation des offres soumises. */
@@ -25,19 +25,19 @@ export default async function ModerationPage() {
         <header className="mb-8">
           <p className="fl-overline">Administration</p>
           <h1 className="mt-2 font-serif text-display-sm text-midnight-900">
-            Moderation
+            Modération
           </h1>
           <p className="mt-2 max-w-2xl text-body text-ink-muted">
             Chaque offre passe ici avant publication. Valider met l&apos;offre en ligne
-            immediatement ; rejeter envoie le motif au recruteur.
+            immédiatement ; rejeter envoie le motif au recruteur.
           </p>
         </header>
 
         {/* ---- Bandeau analytique sobre ---- */}
         <dl className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatTile label="En attente" value={stats.pending} highlight />
-          <StatTile label="Publiees" value={stats.active} />
-          <StatTile label="Rejetees (30 j)" value={stats.rejected} />
+          <StatTile label="Publiées" value={stats.active} />
+          <StatTile label="Rejetées (30 j)" value={stats.rejected} />
           <StatTile label="Maisons inscrites" value={stats.companies} />
         </dl>
 

@@ -107,7 +107,7 @@ export async function assertCanPublishJob(companyId: string): Promise<void> {
   if (active >= entitlements.jobPostQuota) {
     throw new Error(
       `Votre offre ${entitlements.plan.name} autorise ${entitlements.jobPostQuota} offre(s) active(s). ` +
-        'Cloturez une offre en cours ou passez a un palier superieur.',
+        'Clôturez une offre en cours ou passez à un palier supérieur.',
     );
   }
 }
