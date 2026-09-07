@@ -6,7 +6,6 @@ import { z } from 'zod';
 import { actionError, type ActionResult } from '@/app/actions/types';
 import { prisma } from '@/lib/prisma';
 import { requireRecruiter } from '@/lib/rbac';
-import { assertCanPublishJob } from '@/lib/billing';
 import { shortId, slugify } from '@/lib/utils';
 
 const CATEGORY = z.enum(['MAT', 'PRO', 'DEC', 'ACC', 'IMG', 'COM']);
@@ -57,10 +56,6 @@ export async function createJobAction(
     const { submit = false, ...rest } = input;
     const parsed = jobSchema.parse(rest);
     const recruiter = await requireRecruiter();
-
-    if (submit) {
-      await assertCanPublishJob(recruiter.companyId);
-    }
 
     const job = await prisma.job.create({
       data: {
@@ -158,8 +153,6 @@ export async function submitJobForReviewAction(
       return { ok: false, error: 'Seul un brouillon ou une offre rejetée peut être soumis.' };
     }
 
-    await assertCanPublishJob(recruiter.companyId);
-
     await prisma.job.update({
       where: { id: job.id },
       data: { status: 'PENDING_VALIDATION', submittedAt: new Date(), rejectionReason: null },
@@ -190,17 +183,9 @@ export async function closeJobAction(
 
     if (!job) return { ok: false, error: 'Offre introuvable.' };
 
-    await prisma.$transaction(async (tx) => {
-      await tx.job.update({
-        where: { id: job.id },
-        data: { status: 'CLOSED', closedAt: new Date() },
-      });
-
-      // Libere l'emplacement de quota consomme a la publication.
-      await tx.subscription.updateMany({
-        where: { companyId: job.companyId, status: 'ACTIVE', jobPostsUsed: { gt: 0 } },
-        data: { jobPostsUsed: { decrement: 1 } },
-      });
+    await prisma.job.update({
+      where: { id: job.id },
+      data: { status: 'CLOSED', closedAt: new Date() },
     });
 
     revalidatePath('/recruteur/offres');

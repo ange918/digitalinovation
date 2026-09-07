@@ -11,24 +11,24 @@ const COLUMNS = [
   {
     title: 'Talents',
     links: [
+      { href: '/talent', label: 'Espace Candidat & Profil' },
       { href: '/offres', label: 'Parcourir les offres' },
-      { href: '/?auth=inscription&role=talent', label: 'Créer mon profil' },
-      { href: '/#avantages', label: 'Pourquoi s\u2019inscrire' },
+      { href: '/#avantages', label: 'Pourquoi s’inscrire' },
     ],
   },
   {
     title: 'Maisons',
     links: [
-      { href: '/?auth=inscription&role=recruteur', label: 'Publier une offre' },
-      { href: '/#tarifs', label: 'Nos formules' },
+      { href: '/recruteur', label: 'Espace Maison de production' },
+      { href: '/#interfaces', label: 'Les 3 interfaces' },
       { href: '/#fonctionnement', label: 'Comment ça marche' },
     ],
   },
   {
-    title: 'FASHLINK',
+    title: 'Administration',
     links: [
+      { href: '/admin', label: 'Espace Administrateur' },
       { href: '/#faq', label: 'Questions fréquentes' },
-      { href: '/#categories', label: 'Les six métiers' },
       { href: '/?auth=connexion', label: 'Se connecter' },
     ],
   },

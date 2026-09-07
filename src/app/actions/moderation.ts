@@ -73,25 +73,13 @@ export async function approveJobAction(
         },
       });
 
-      // Consommation du quota sur l'abonnement actif, s'il y en a un.
-      await tx.subscription.updateMany({
-        where: {
-          companyId: job.companyId,
-          status: 'ACTIVE',
-          currentPeriodEnd: { gt: now },
-        },
-        data: {
-          jobPostsUsed: { increment: 1 },
-          featuredUsed: parsed.feature ? { increment: 1 } : undefined,
-        },
-      });
-
+      // Notification à la maison de production
       await tx.notification.create({
         data: {
           userId: job.company.userId,
           type: 'JOB_APPROVED',
-          title: 'Offre publiee',
-          body: `« ${job.title} » est en ligne jusqu'au ${expiresAt.toLocaleDateString('fr-FR')}.`,
+          title: 'Offre validée et publiée',
+          body: `« ${job.title} » a été validée par l'administrateur et est maintenant en ligne pour les candidats jusqu'au ${expiresAt.toLocaleDateString('fr-FR')}.`,
           href: `/offres/${job.slug}`,
           data: { jobId: job.id },
         },
@@ -108,7 +96,10 @@ export async function approveJobAction(
       });
     });
 
+    revalidatePath('/admin');
     revalidatePath('/admin/moderation');
+    revalidatePath('/recruteur');
+    revalidatePath('/talent');
     revalidatePath('/offres');
     revalidatePath(`/offres/${job.slug}`);
 
@@ -292,3 +283,111 @@ export async function setCompanyVerifiedAction(
     return actionError(error, 'La mise à jour du badge a échoué.');
   }
 }
+
+const forwardCandidateSchema = z.object({
+  applicationId: z.string().min(1),
+  adminNote: z.string().min(3, 'Veuillez saisir une analyse ou recommandation pour la maison.'),
+  rating: z.number().int().min(1).max(5).optional(),
+});
+
+/**
+ * Analyse & transmission d'un profil candidat à la maison de production.
+ *
+ * Rôle central de l'administrateur FASHLINK : après analyse du book,
+ * du CV et de l'adéquation avec les conditions formulées par la maison,
+ * l'administrateur valide le profil et le transmet directement à l'espace
+ * de la maison avec ses commentaires qualifiés.
+ */
+export async function forwardCandidateToCompanyAction(
+  input: z.infer<typeof forwardCandidateSchema>,
+): Promise<ActionResult<{ applicationId: string }>> {
+  try {
+    const parsed = forwardCandidateSchema.parse(input);
+    const admin = await requireAdmin();
+
+    const app = await prisma.application.findFirst({
+      where: { id: parsed.applicationId },
+      include: {
+        job: {
+          select: {
+            id: true,
+            title: true,
+            companyId: true,
+            company: { select: { userId: true, name: true } },
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
+      },
+    });
+
+    if (!app) {
+      return { ok: false, error: 'Candidature introuvable.' };
+    }
+
+    const now = new Date();
+    await prisma.$transaction(async (tx) => {
+      await tx.application.update({
+        where: { id: app.id },
+        data: {
+          status: 'SHORTLISTED',
+          recruiterNote: parsed.adminNote,
+          rating: parsed.rating ?? 5,
+          viewedAt: app.viewedAt ?? now,
+        },
+      });
+
+      await tx.applicationEvent.create({
+        data: {
+          applicationId: app.id,
+          fromStatus: app.status,
+          toStatus: 'SHORTLISTED',
+          actorId: admin.id,
+          comment: `Profil analysé et transmis à la maison : ${parsed.adminNote}`,
+        },
+      });
+
+      // Notification pour la maison de production
+      if (app.job?.company?.userId) {
+        await tx.notification.create({
+          data: {
+            userId: app.job.company.userId,
+            type: 'APPLICATION_SHORTLISTED',
+            title: 'Profil analysé & transmis par FASHLINK',
+            body: `L'administrateur vous a transmis le profil de ${app.user.firstName} ${app.user.lastName} pour votre annonce « ${app.job.title} ». Analyse admin : « ${parsed.adminNote} ».`,
+            href: `/recruteur#candidats`,
+            data: { applicationId: app.id, jobId: app.job.id },
+          },
+        });
+      }
+
+      // Notification pour le candidat
+      await tx.notification.create({
+        data: {
+          userId: app.user.id,
+          type: 'APPLICATION_STATUS_CHANGED',
+          title: 'Profil validé et transmis à la maison !',
+          body: `Votre profil a été analysé et validé par l'équipe FASHLINK, puis transmis à la maison ${app.job?.company?.name || 'de production'}.`,
+          href: `/talent#candidatures`,
+          data: { applicationId: app.id, jobId: app.job.id },
+        },
+      });
+    });
+
+    revalidatePath('/admin');
+    revalidatePath('/admin/moderation');
+    revalidatePath('/recruteur');
+    revalidatePath('/talent');
+
+    return { ok: true, data: { applicationId: app.id } };
+  } catch (error) {
+    return actionError(error, 'La transmission du profil a échoué.');
+  }
+}
+

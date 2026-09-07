@@ -8,26 +8,23 @@ import { FaqSection } from '@/components/landing/FaqSection';
 import { FinalCta } from '@/components/landing/FinalCta';
 import { HeroSection } from '@/components/landing/HeroSection';
 import { HowItWorksSection } from '@/components/landing/HowItWorksSection';
-import { PricingSection } from '@/components/landing/PricingSection';
+import { ThreeInterfacesSection } from '@/components/landing/ThreeInterfacesSection';
 import { SiteFooter } from '@/components/layout/SiteFooter';
 import { SiteHeader } from '@/components/layout/SiteHeader';
 
 export const metadata: Metadata = {
-  title: 'FASHLINK — Emploi, stage et freelance dans la mode',
+  title: 'FASHLINK — Plateforme d’emploi & production mode en Afrique',
   description:
-    "Entrez dans la base de talents de la mode en Afrique francophone. Profil gratuit, book en ligne, candidature en un clic. Les maisons recrutent ici.",
+    "Intermédiation structurée entre talents, maisons de production et modération. Annonces vérifiées, profils analysés et transmission directe.",
 };
 
 /**
- * Landing page unique.
+ * Landing page FASHLINK.
  *
- * Tout le parcours de decouverte tient sur cette page : ce qu'on gagne a
- * s'inscrire, les six categories, le fonctionnement, les tarifs detailles et
- * les questions frequentes. Connexion et inscription s'ouvrent en fenetre
- * modale — le visiteur ne quitte jamais la page.
- *
- * Aucune section n'interroge la base de donnees : la landing s'affiche
- * integralement meme sans `DATABASE_URL`.
+ * Articulée autour des trois interfaces :
+ * 1. Utilisateurs / Talents
+ * 2. Marques & Maisons de production
+ * 3. Administration
  */
 export default function LandingPage() {
   return (
@@ -36,10 +33,10 @@ export default function LandingPage() {
 
       <main>
         <HeroSection />
+        <ThreeInterfacesSection />
         <BenefitsSection />
         <CategoriesSection />
         <HowItWorksSection />
-        <PricingSection />
         <FaqSection />
         <FinalCta />
       </main>

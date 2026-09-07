@@ -156,7 +156,12 @@ export function JobCard({ job, isSaved = false, onToggleSave, className }: JobCa
 
       {/* ---- Remuneration : seule donnee mise en avant en bleu nuit ---- */}
       {salary && (
-        <p className="mt-4 text-body-sm font-semibold text-midnight-900 tabular">{salary}</p>
+        <p
+          className="mt-4 text-body-sm font-semibold text-midnight-900 tabular"
+          suppressHydrationWarning
+        >
+          {salary}
+        </p>
       )}
 
       {/* ---- Pied : categories + fraicheur ---- */}
@@ -176,7 +181,7 @@ export function JobCard({ job, isSaved = false, onToggleSave, className }: JobCa
 
         <div className="shrink-0 text-right">
           {job.publishedAt && (
-            <p className="text-caption text-ink-subtle">
+            <p className="text-caption text-ink-subtle" suppressHydrationWarning>
               {formatRelativeDate(job.publishedAt)}
             </p>
           )}

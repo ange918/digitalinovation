@@ -10,15 +10,17 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
- * Formate un montant en francs CFA.
- * Le XOF n'a pas de subdivision en usage : jamais de decimales.
+ * Formate un montant en francs CFA de manière déterministe.
+ * Le XOF n'a pas de subdivision en usage : jamais de décimales.
+ * Évite les divergences d'hydratation SSR/client causées par les différences
+ * d'implémentation ICU entre Node.js ("F CFA") et les navigateurs ("XOF").
  */
 export function formatXof(amount: number): string {
-  return new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'XOF',
-    maximumFractionDigits: 0,
-  }).format(amount);
+  const rounded = Math.round(amount);
+  const formattedNumber = rounded
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, '\u202F');
+  return `${formattedNumber}\u00A0FCFA`;
 }
 
 /**

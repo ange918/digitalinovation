@@ -34,7 +34,7 @@ export function BenefitsSection() {
           icon={<BuildingIcon className="h-5 w-5" />}
           audience="Maisons"
           title="Vous recrutez"
-          note="À partir de la formule gratuite"
+          note="Transmission de profils analysés & vérifiés"
           benefits={RECRUITER_BENEFITS}
           ctaLabel="Inscrire ma maison"
           ctaHref="/?auth=inscription&role=recruteur"

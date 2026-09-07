@@ -7,48 +7,6 @@ import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
-const PLANS = [
-  {
-    tier: 'STARTER' as const,
-    name: 'Starter',
-    description: 'Pour publier une premiere offre et tester la plateforme.',
-    priceXof: 0,
-    priceYearlyXof: null,
-    jobPostQuota: 1,
-    featuredQuota: 0,
-    seatQuota: 1,
-    canSearchTalents: false,
-    canExportApplications: false,
-    hasPrioritySupport: false,
-  },
-  {
-    tier: 'PRO' as const,
-    name: 'Pro',
-    description: 'Pour les maisons et ateliers qui recrutent regulierement.',
-    priceXof: 25_000,
-    priceYearlyXof: 250_000,
-    jobPostQuota: 10,
-    featuredQuota: 2,
-    seatQuota: 3,
-    canSearchTalents: true,
-    canExportApplications: true,
-    hasPrioritySupport: false,
-  },
-  {
-    tier: 'PREMIUM' as const,
-    name: 'Premium',
-    description: 'Pour les groupes et les campagnes de recrutement continues.',
-    priceXof: 60_000,
-    priceYearlyXof: 600_000,
-    jobPostQuota: -1,
-    featuredQuota: 10,
-    seatQuota: 10,
-    canSearchTalents: true,
-    canExportApplications: true,
-    hasPrioritySupport: true,
-  },
-];
-
 const JOBS: {
   title: string;
   category: Category;
@@ -199,16 +157,6 @@ const JOBS: {
 
 async function main() {
   console.log('Seed FASHLINK — demarrage');
-
-  // --- Plans ---------------------------------------------------------------
-  for (const plan of PLANS) {
-    await prisma.plan.upsert({
-      where: { tier: plan.tier },
-      update: plan,
-      create: plan,
-    });
-  }
-  console.log(`  ${PLANS.length} plans en place`);
 
   const password = await bcrypt.hash('Fashlink2026', 12);
 

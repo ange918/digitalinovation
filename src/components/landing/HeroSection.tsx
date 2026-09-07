@@ -1,5 +1,3 @@
-import Link from 'next/link';
-
 import { ButtonLink } from '@/components/ui/Button';
 import { ArrowRightIcon } from '@/components/ui/Icons';
 import { CATEGORY_ORDER } from '@/lib/constants';
@@ -46,18 +44,20 @@ export function HeroSection() {
               size="lg"
               variant="secondary"
             >
-              Je recrute
+              Maison de production
+            </ButtonLink>
+            <ButtonLink
+              href="/admin"
+              size="lg"
+              variant="outline"
+              className="text-ink-muted hover:text-midnight-900"
+            >
+              Accès Administration
             </ButtonLink>
           </div>
 
           <p className="mt-5 text-caption text-ink-subtle">
-            Gratuit pour les talents.{' '}
-            <Link
-              href="#tarifs"
-              className="font-medium text-royal-600 underline-offset-2 hover:underline"
-            >
-              Voir les formules recruteur
-            </Link>
+            Modèle d&apos;intermédiation directe · Modération des offres et analyse personnalisée des profils.
           </p>
         </div>
 

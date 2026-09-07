@@ -1,8 +1,10 @@
 /**
- * Contenu editorial de la landing page.
+ * Contenu éditorial de la landing page.
  *
- * Separe de `constants.ts`, qui porte les regles metier : ici, rien n'est
- * utilise par la logique applicative. Un texte se corrige sans risque.
+ * Décrit le modèle d'intermédiation à trois interfaces :
+ * 1. Utilisateurs / Talents
+ * 2. Marques & Maisons de production
+ * 3. Administrateur
  */
 
 export interface Benefit {
@@ -10,43 +12,43 @@ export interface Benefit {
   body: string;
 }
 
-/** Ce qu'un talent gagne a entrer dans la base FASHLINK. */
+/** Ce qu'un talent gagne à entrer dans la base FASHLINK. */
 export const TALENT_BENEFITS: Benefit[] = [
   {
-    title: 'Un profil vu par les maisons',
-    body: "Votre fiche entre dans la base consultée par les recruteurs abonnés. Ce sont eux qui vous trouvent, pas l’inverse.",
+    title: 'Un profil professionnel complet',
+    body: "Vos compétences clés, votre book, votre CV et vos spécialités mode sont centralisés dans une interface dédiée.",
   },
   {
-    title: 'Un book en ligne, pas un CV mort',
-    body: 'Planches de collection, photos de défilé, pièces réalisées : votre travail se montre au lieu de se raconter.',
+    title: 'Des annonces vérifiées par l’administrateur',
+    body: 'Toutes les offres publiées proviennent de vraies maisons de production et ont été validées avant publication.',
   },
   {
-    title: 'Candidature en un clic',
-    body: "Votre profil et votre CV partent ensemble. Pas de formulaire à remplir à chaque offre.",
+    title: 'Candidature directe en un clic',
+    body: "Postulez avec votre profil et votre book. Aucune paperasse superflue, votre candidature part directement à l'administration.",
   },
   {
-    title: 'Vous savez où vous en êtes',
-    body: 'Consultée, présélectionnée, entretien : chaque étape de votre candidature est visible. Fini le silence.',
+    title: 'Suivi transparent de transmission',
+    body: "Vous êtes informé dès que l'administrateur analyse votre profil et lorsqu'il est transmis à la maison de production.",
   },
 ];
 
-/** Ce qu'une maison gagne a publier sur FASHLINK. */
+/** Ce qu'une maison gagne à publier sur FASHLINK. */
 export const RECRUITER_BENEFITS: Benefit[] = [
   {
-    title: 'Des candidats du secteur',
-    body: "Une base entièrement dédiée à la mode. Vous ne triez plus des profils hors sujet.",
+    title: 'Publication simple de vos besoins',
+    body: "Exprimez précisément votre recherche : 'Je cherche 10 personnes pour mon atelier, voici les conditions requises...'.",
   },
   {
-    title: 'Des offres vérifiées',
-    body: "Chaque annonce est relue par l’équipe FASHLINK avant publication. Votre marque paraît sérieuse parce qu’elle l’est.",
+    title: 'Modération et validation rapides',
+    body: "L’administrateur relit votre annonce, s'assure de sa clarté et la publie auprès de la communauté de talents.",
   },
   {
-    title: 'Un suivi lisible',
-    body: 'Présélection, entretien, proposition : vos candidatures avancent par étapes, avec notes et évaluations internes.',
+    title: 'Analyse et sélection préalables des profils',
+    body: "L'administrateur reçoit les candidatures, étudie le book, le CV et les compétences avant de vous transmettre les meilleurs profils.",
   },
   {
-    title: 'Paiement mobile money',
-    body: 'MTN, Moov, Celtiis, Wave. Votre abonnement s’active depuis votre téléphone, sans carte bancaire.',
+    title: 'Mise en relation ciblée sans bruit',
+    body: "Vous ne recevez que les candidats qualifiés et recommandés, prêts à rejoindre votre atelier ou votre studio.",
   },
 ];
 
@@ -59,18 +61,18 @@ export interface Step {
 export const TALENT_STEPS: Step[] = [
   {
     number: '01',
-    title: 'Vous créez votre compte',
-    body: "Nom, e-mail, mot de passe. Trente secondes, et vous êtes dans la base.",
+    title: 'Création de compte & profil',
+    body: "Nom, métier, spécialités de mode, book et CV. Votre profil est prêt en quelques instants.",
   },
   {
     number: '02',
-    title: 'Vous complétez votre profil',
-    body: 'Vos catégories parmi les six métiers, vos compétences, votre book et votre CV.',
+    title: 'Consultation des offres publiées',
+    body: 'Découvrez les annonces des maisons de production validées par l’administrateur FASHLINK.',
   },
   {
     number: '03',
-    title: 'Vous postulez, ou l’on vous contacte',
-    body: 'Un clic sur une offre, ou une maison qui vous écrit directement via la messagerie.',
+    title: 'Candidature & transmission à la maison',
+    body: "Vous postulez, l’administrateur examine votre profil puis le transmet à la maison de production pour entretien.",
   },
 ];
 
@@ -81,52 +83,28 @@ export interface FaqItem {
 
 export const FAQ: FaqItem[] = [
   {
-    question: 'L’inscription est-elle payante pour un talent ?',
+    question: 'Comment fonctionnent les trois interfaces de FASHLINK ?',
     answer:
-      "Non. Créer un profil, entrer dans la base, postuler et échanger avec les recruteurs est entièrement gratuit et le restera. Seules les maisons qui recrutent souscrivent un abonnement.",
+      "La plateforme s'articule autour de trois espaces : l'interface Utilisateur (pour consulter les annonces, créer son profil et postuler), l'interface Maisons de production (pour exprimer ses besoins en recrutement et recevoir des profils qualifiés), et l'interface Administrateur (pour modérer les offres, analyser les candidatures et transmettre les talents retenus aux maisons).",
   },
   {
     question: 'Que veulent dire MAT, PRO, DEC, ACC, IMG et COM ?',
     answer:
-      "Ce sont les six familles de métiers qui structurent la plateforme : Matières & Fournitures, Production & Confection, Décoration & Finition, Accessoires, Image & Communication, Commerce & Distribution. Vous pouvez en choisir plusieurs sur votre profil.",
+      "Ce sont les six familles de métiers qui structurent la plateforme : Matières & Fournitures (MAT), Production & Confection (PRO), Décoration & Finition (DEC), Accessoires (ACC), Image & Communication (IMG), et Commerce & Distribution (COM).",
   },
   {
-    question: 'Combien de temps avant qu’une offre soit publiée ?',
+    question: 'Comment une maison de production publie-t-elle une offre ?',
     answer:
-      "Chaque offre est relue par l’équipe FASHLINK avant sa mise en ligne. En cas de refus, vous recevez le motif précis et vous pouvez corriger puis resoumettre.",
+      "Depuis son espace dédié, la maison renseigne le nombre de personnes recherchées, la description du projet et la liste précise des conditions. L'offre est transmise à l'administrateur qui la valide et la publie sur la plateforme.",
   },
   {
-    question: 'Comment se passe le paiement depuis le Bénin ?',
+    question: 'Que se passe-t-il après qu’un utilisateur a postulé ?',
     answer:
-      "Par mobile money : CinetPay (MTN, Moov, Celtiis et carte bancaire), Wave ou MTN MoMo en direct. Vous validez depuis votre téléphone et votre abonnement s’active automatiquement.",
+      "L'administrateur reçoit une notification immédiate. Il examine en détail le profil du candidat (expérience, book, CV) au regard des conditions demandées par la maison. Une fois l'analyse effectuée, il transmet la fiche du candidat à la maison avec ses recommandations.",
   },
   {
-    question: 'Puis-je résilier mon abonnement ?',
+    question: 'FASHLINK est-il ouvert à toute l’Afrique francophone ?',
     answer:
-      "Oui, à tout moment. Il n’y a aucun prélèvement automatique : votre formule court jusqu’à sa date de fin, puis votre compte revient simplement au palier Starter sans jamais être bloqué.",
+      "Oui. Née à Cotonou, la plateforme connecte des créateurs, ateliers et professionnels de toute la sous-région (Bénin, Côte d'Ivoire, Sénégal, Togo, etc.).",
   },
-  {
-    question: 'FASHLINK couvre-t-il d’autres pays que le Bénin ?',
-    answer:
-      "La plateforme est née à Cotonou et s’adresse à toute l’Afrique francophone. Les offres et les profils peuvent être publiés depuis n’importe quel pays de la zone.",
-  },
-];
-
-/** Lignes du tableau comparatif des formules. */
-export const PLAN_COMPARISON: {
-  label: string;
-  starter: string;
-  pro: string;
-  premium: string;
-}[] = [
-  { label: 'Offres actives simultanément', starter: '1', pro: '10', premium: 'Illimité' },
-  { label: 'Mises en avant par mois', starter: '—', pro: '2', premium: '10' },
-  { label: 'Comptes recruteurs', starter: '1', pro: '3', premium: '10' },
-  { label: 'Réception des candidatures', starter: 'Oui', pro: 'Oui', premium: 'Oui' },
-  { label: 'Messagerie avec les candidats', starter: 'Oui', pro: 'Oui', premium: 'Oui' },
-  { label: 'Fiche entreprise publique', starter: 'Oui', pro: 'Oui', premium: 'Oui' },
-  { label: 'Recherche dans la base de talents', starter: '—', pro: 'Oui', premium: 'Oui' },
-  { label: 'Contact direct des talents', starter: '—', pro: '—', premium: 'Oui' },
-  { label: 'Export des candidatures (CSV)', starter: '—', pro: 'Oui', premium: 'Oui' },
-  { label: 'Support prioritaire Susuni Lab', starter: '—', pro: '—', premium: 'Oui' },
 ];

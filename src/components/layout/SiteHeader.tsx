@@ -1,27 +1,29 @@
 import Link from 'next/link';
 
 import { ButtonLink } from '@/components/ui/Button';
-import { getCurrentUser } from '@/lib/auth';
+import { InterfaceSwitcher } from '@/components/layout/InterfaceSwitcher';
+import { getCurrentUser, type CurrentUser } from '@/lib/auth';
 import { landingPathForRole } from '@/lib/routes';
 import { cn } from '@/lib/utils';
 
 /**
- * Navigation de la landing : des ancres, pas des pages.
- * « Offres » est le seul lien sortant — cette page existe reellement.
+ * Navigation principale mettant en valeur les 3 interfaces et les offres.
  */
 const NAV = [
-  { href: '/#avantages', label: 'Pourquoi FASHLINK' },
-  { href: '/#categories', label: 'Métiers' },
-  { href: '/#tarifs', label: 'Tarifs' },
-  { href: '/offres', label: 'Offres' },
+  { href: '/#interfaces', label: 'Les 3 Interfaces' },
+  { href: '/offres', label: 'Offres en ligne' },
+  { href: '/talent', label: 'Espace Candidats' },
+  { href: '/recruteur', label: 'Espace Maisons' },
+  { href: '/admin', label: 'Administration' },
 ];
 
 /** En-tete global. Server Component : la session est lue sans JS cote client. */
-export async function SiteHeader() {
-  const user = await getCurrentUser();
+export async function SiteHeader({ user: propUser }: { user?: CurrentUser | null } = {}) {
+  const user = propUser !== undefined ? propUser : await getCurrentUser();
 
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-canvas/85 backdrop-blur-md">
+      <InterfaceSwitcher currentRole={user?.role} />
       <div className="container flex h-[var(--fl-header-height)] items-center justify-between gap-6">
         <div className="flex items-center gap-10">
           <Link href="/" className="shrink-0" aria-label="FASHLINK, accueil">

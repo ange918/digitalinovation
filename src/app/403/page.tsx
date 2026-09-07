@@ -7,7 +7,7 @@ export const metadata = { title: 'Accès refusé' };
 export default function ForbiddenPage() {
   return (
     <>
-      <SiteHeader />
+      <SiteHeader user={null} />
       <main className="container flex min-h-[60vh] flex-col items-center justify-center py-20 text-center">
         <p className="fl-overline text-danger-500">Erreur 403</p>
         <h1 className="mt-4 font-bold text-display-md text-midnight-900">

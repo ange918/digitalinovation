@@ -1,0 +1,6 @@
+{
+  "name": "FASHLINK",
+  "description": "Plateforme d’emploi et production mode en Afrique francophone : intermédiation structurée entre maisons de production, candidats et administration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

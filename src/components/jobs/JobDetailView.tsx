@@ -161,7 +161,12 @@ export function JobDetailView({ job, viewerRole, hasApplied }: JobDetailViewProp
               </div>
 
               {salary && (
-                <p className="mt-6 font-bold text-title-lg text-white tabular">{salary}</p>
+                <p
+                  className="mt-6 font-bold text-title-lg text-white tabular"
+                  suppressHydrationWarning
+                >
+                  {salary}
+                </p>
               )}
 
               <dl className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-caption text-white/55">
@@ -169,7 +174,7 @@ export function JobDetailView({ job, viewerRole, hasApplied }: JobDetailViewProp
                   <div className="flex items-center gap-1.5">
                     <ClockIcon className="h-3.5 w-3.5" />
                     <dt className="sr-only">Publiee</dt>
-                    <dd>Publiée {formatRelativeDate(job.publishedAt)}</dd>
+                    <dd suppressHydrationWarning>Publiée {formatRelativeDate(job.publishedAt)}</dd>
                   </div>
                 )}
                 <div className="flex items-center gap-1.5">

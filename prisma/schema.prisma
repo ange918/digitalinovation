@@ -103,40 +103,6 @@ enum ApplicationStatus {
   WITHDRAWN // retiree par le talent
 }
 
-/// Paliers d'abonnement recruteur.
-enum PlanTier {
-  STARTER // gratuit
-  PRO
-  PREMIUM
-}
-
-/// Cycle de vie d'un abonnement.
-enum SubscriptionStatus {
-  PENDING_PAYMENT
-  ACTIVE
-  PAST_DUE
-  CANCELED
-  EXPIRED
-}
-
-/// Prestataires de paiement mobile money disponibles au Benin.
-enum PaymentProvider {
-  CINETPAY
-  WAVE
-  MTN_MOMO
-  MANUAL // regularisation par l'equipe FASHLINK
-}
-
-/// Etat d'une transaction de paiement.
-enum PaymentStatus {
-  INITIATED
-  PENDING
-  SUCCEEDED
-  FAILED
-  CANCELED
-  REFUNDED
-}
-
 /// Type de piece jointe d'un portfolio.
 enum MediaType {
   IMAGE
@@ -343,8 +309,6 @@ model Company {
   verifiedAt   DateTime?
 
   jobs          Job[]
-  subscriptions Subscription[]
-  payments      Payment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -510,131 +474,6 @@ model ApplicationEvent {
 
   @@index([applicationId, createdAt])
   @@map("application_events")
-}
-
-// =============================================================================
-// ABONNEMENTS & PAIEMENTS
-// =============================================================================
-
-/// Catalogue des offres commerciales. Table plutot qu'enum fige : les prix
-/// et quotas evoluent sans migration de schema.
-model Plan {
-  id   String   @id @default(cuid())
-  tier PlanTier @unique
-
-  name        String
-  description String? @db.Text
-  /// Prix mensuel en XOF (entier). 0 pour STARTER.
-  priceXof    Int
-  /// Prix annuel remise, null si non propose.
-  priceYearlyXof Int?
-
-  /// Quotas appliques par le middleware de facturation.
-  jobPostQuota    Int // offres actives simultanees (-1 = illimite)
-  featuredQuota   Int @default(0) // mises en avant par mois
-  seatQuota       Int @default(1) // comptes recruteurs
-  canSearchTalents Boolean @default(false)
-  canExportApplications Boolean @default(false)
-  hasPrioritySupport Boolean @default(false)
-
-  isActive Boolean @default(true)
-
-  subscriptions Subscription[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("plans")
-}
-
-/// Abonnement d'une entreprise a un plan, sur une periode donnee.
-model Subscription {
-  id        String  @id @default(cuid())
-  companyId String
-  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  planId    String
-  plan      Plan    @relation(fields: [planId], references: [id])
-
-  status SubscriptionStatus @default(PENDING_PAYMENT)
-
-  currentPeriodStart DateTime  @default(now())
-  currentPeriodEnd   DateTime
-  canceledAt         DateTime?
-  /// Renouvellement manuel par defaut : le Mobile Money ne permet pas de
-  /// prelevement recurrent fiable au Benin.
-  autoRenew          Boolean   @default(false)
-
-  /// Consommation de la periode courante, remise a zero au renouvellement.
-  jobPostsUsed  Int @default(0)
-  featuredUsed  Int @default(0)
-
-  payments Payment[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  /// Une entreprise n'a qu'un abonnement actif : garanti applicativement
-  /// (transaction) et par cet index de recherche.
-  @@index([companyId, status])
-  @@index([status, currentPeriodEnd])
-  @@map("subscriptions")
-}
-
-/// Transaction de paiement mobile money (CinetPay / Wave / MTN MoMo).
-model Payment {
-  id             String  @id @default(cuid())
-  companyId      String
-  company        Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  subscriptionId String?
-  subscription   Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
-
-  provider PaymentProvider
-  status   PaymentStatus   @default(INITIATED)
-
-  /// Reference generee par FASHLINK et transmise au PSP (idempotence).
-  reference String @unique
-  /// Identifiant de transaction cote prestataire, connu apres le webhook.
-  providerTransactionId String? @unique
-
-  amountXof Int
-  currency  String @default("XOF")
-
-  /// Numero mobile money utilise (E.164), pour le rapprochement comptable.
-  payerPhone String?
-  /// Charge utile brute du webhook, conservee telle quelle pour audit/litige.
-  rawPayload Json?
-  failureReason String? @db.Text
-
-  paidAt DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([companyId, createdAt])
-  @@index([status, provider])
-  @@map("payments")
-}
-
-/// Journal des webhooks recus. Cle d'idempotence : un meme evenement rejoue
-/// par le PSP ne doit jamais crediter deux fois un abonnement.
-model WebhookEvent {
-  id       String          @id @default(cuid())
-  provider PaymentProvider
-  /// Identifiant d'evenement du PSP, ou hash du payload s'il n'en fournit pas.
-  eventId  String
-  payload  Json
-  /// Signature HMAC brute, conservee pour re-verification a posteriori.
-  signature String?
-
-  processedAt DateTime?
-  error       String?   @db.Text
-  attempts    Int       @default(0)
-
-  createdAt DateTime @default(now())
-
-  @@unique([provider, eventId])
-  @@index([processedAt])
-  @@map("webhook_events")
 }
 
 // =============================================================================

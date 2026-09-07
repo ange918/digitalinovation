@@ -214,7 +214,7 @@ export function AdminApprovalTable({ jobs }: AdminApprovalTableProps) {
                         <CategoryTag category={job.category} variant="code" />
                       </td>
 
-                      <td className="py-4 pr-4 text-body-sm text-ink-muted tabular">
+                      <td className="py-4 pr-4 text-body-sm text-ink-muted tabular" suppressHydrationWarning>
                         {formatSalaryRange(
                           job.salaryMinXof,
                           job.salaryMaxXof,
@@ -223,7 +223,7 @@ export function AdminApprovalTable({ jobs }: AdminApprovalTableProps) {
                         ) ?? <span className="text-ink-faint">Non communiquée</span>}
                       </td>
 
-                      <td className="py-4 pr-4 text-caption text-ink-subtle">
+                      <td className="py-4 pr-4 text-caption text-ink-subtle" suppressHydrationWarning>
                         {job.submittedAt ? formatRelativeDate(job.submittedAt) : '—'}
                       </td>
 
@@ -271,7 +271,7 @@ export function AdminApprovalTable({ jobs }: AdminApprovalTableProps) {
                     <CategoryTag category={job.category} variant="code" />
                   </div>
 
-                  <p className="mt-3 text-caption text-ink-subtle">
+                  <p className="mt-3 text-caption text-ink-subtle" suppressHydrationWarning>
                     {JOB_TYPES[job.jobType].label}
                     {job.city ? ` · ${job.city}` : ''}
                     {job.submittedAt ? ` · ${formatRelativeDate(job.submittedAt)}` : ''}

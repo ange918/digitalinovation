@@ -31,19 +31,6 @@ export async function GET(request: Request) {
     data: { status: 'EXPIRED' },
   });
 
-  // Libere un emplacement de quota par offre expiree.
-  for (const job of expiring) {
-    await prisma.subscription.updateMany({
-      where: { companyId: job.companyId, status: 'ACTIVE', jobPostsUsed: { gt: 0 } },
-      data: { jobPostsUsed: { decrement: 1 } },
-    });
-  }
-
-  const expiredSubscriptions = await prisma.subscription.updateMany({
-    where: { status: 'ACTIVE', currentPeriodEnd: { lte: now } },
-    data: { status: 'EXPIRED' },
-  });
-
   // Rappel a J-3.
   const soon = new Date(now);
   soon.setDate(soon.getDate() + 3);
@@ -68,7 +55,6 @@ export async function GET(request: Request) {
   return NextResponse.json({
     ranAt: now.toISOString(),
     expiredJobs: expiredJobs.count,
-    expiredSubscriptions: expiredSubscriptions.count,
     notified: endingSoon.length,
   });
 }

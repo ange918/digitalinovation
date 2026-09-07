@@ -124,3 +124,10 @@ export const ShareIcon = (p: IconProps) => (
     <path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4" />
   </Base>
 );
+
+export const ShieldCheckIcon = (p: IconProps) => (
+  <Base {...p}>
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    <path d="m9 12 2 2 4-4" />
+  </Base>
+);

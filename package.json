@@ -7,8 +7,8 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "dev": "next dev",
-    "build": "DATABASE_URL=${DATABASE_URL:-postgresql://fashlink:fashlink@localhost:5432/fashlink} prisma generate && next build",
+    "dev": "next dev -p 3000 -H 0.0.0.0",
+    "build": "DATABASE_URL=${DATABASE_URL:-postgresql://fashlink:fashlink@localhost:5432/fashlink} prisma generate && NODE_ENV=production next build",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
@@ -27,6 +27,7 @@
     "bcryptjs": "^2.4.3",
     "clsx": "^2.1.1",
     "jose": "^5.9.6",
+    "lucide-react": "^1.41.0",
     "next": "^15.1.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

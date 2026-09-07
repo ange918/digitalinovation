@@ -88,20 +88,23 @@ export async function applyToJobAction(
         data: { applicationCount: { increment: 1 } },
       });
 
+      // Notification à l'administrateur pour analyse du profil avant transmission
       await tx.notification.create({
         data: {
-          userId: job.company.userId,
+          userId: 'user_admin', // Administrateur central
           type: 'APPLICATION_RECEIVED',
-          title: 'Nouvelle candidature',
-          body: `${user.firstName} ${user.lastName} a postule a « ${job.title} ».`,
-          href: `/recruteur/offres/${job.id}/candidatures`,
+          title: 'Nouvelle candidature à analyser',
+          body: `${user.firstName} ${user.lastName} a postulé à l’offre « ${job.title} ». Profil en attente d'analyse pour transmission à ${job.company.name}.`,
+          href: `/admin#candidatures`,
           data: { applicationId: application.id, jobId: job.id },
         },
       });
     });
 
     revalidatePath(`/offres/${job.slug}`);
-    revalidatePath('/talent/candidatures');
+    revalidatePath('/talent');
+    revalidatePath('/admin');
+    revalidatePath('/recruteur');
 
     return { ok: true };
   } catch (error) {

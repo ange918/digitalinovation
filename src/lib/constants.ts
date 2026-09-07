@@ -4,7 +4,6 @@ import type {
   ExperienceLevel,
   JobStatus,
   JobType,
-  PlanTier,
   WorkMode,
 } from '@prisma/client';
 
@@ -58,6 +57,15 @@ export const CATEGORIES: Record<
 };
 
 export const CATEGORY_ORDER: Category[] = ['MAT', 'PRO', 'DEC', 'ACC', 'IMG', 'COM'];
+
+export const CATEGORY_LABELS: Record<string, string> = {
+  MAT: 'Matières & Fournitures',
+  PRO: 'Production & Confection',
+  DEC: 'Décoration & Finition',
+  ACC: 'Accessoires',
+  IMG: 'Image & Communication',
+  COM: 'Commerce & Distribution',
+};
 
 export const JOB_TYPES: Record<JobType, { label: string; description: string }> = {
   EMPLOI: { label: 'Emploi', description: 'Contrat à durée déterminée ou indéterminée.' },
@@ -120,86 +128,6 @@ export const APPLICATION_TRANSITIONS: Record<ApplicationStatus, ApplicationStatu
   HIRED: [],
   REJECTED: [],
   WITHDRAWN: [],
-};
-
-/**
- * Catalogue commercial de reference.
- * Sert au seed et a l'affichage de la page tarifs ; la source de verite en
- * production reste la table `Plan`.
- */
-export const PLAN_CATALOG: Record<
-  PlanTier,
-  {
-    name: string;
-    priceXof: number;
-    priceYearlyXof: number | null;
-    jobPostQuota: number;
-    featuredQuota: number;
-    seatQuota: number;
-    canSearchTalents: boolean;
-    canExportApplications: boolean;
-    hasPrioritySupport: boolean;
-    pitch: string;
-    features: string[];
-  }
-> = {
-  STARTER: {
-    name: 'Starter',
-    priceXof: 0,
-    priceYearlyXof: null,
-    jobPostQuota: 1,
-    featuredQuota: 0,
-    seatQuota: 1,
-    canSearchTalents: false,
-    canExportApplications: false,
-    hasPrioritySupport: false,
-    pitch: 'Pour publier une première offre et tester la plateforme.',
-    features: [
-      '1 offre active à la fois',
-      'Réception des candidatures',
-      'Messagerie avec les candidats',
-      'Fiche entreprise publique',
-    ],
-  },
-  PRO: {
-    name: 'Pro',
-    priceXof: 25_000,
-    priceYearlyXof: 250_000,
-    jobPostQuota: 10,
-    featuredQuota: 2,
-    seatQuota: 3,
-    canSearchTalents: true,
-    canExportApplications: true,
-    hasPrioritySupport: false,
-    pitch: 'Pour les maisons et ateliers qui recrutent régulièrement.',
-    features: [
-      '10 offres actives simultanément',
-      '2 mises en avant par mois',
-      'Recherche dans la base de talents',
-      'Export des candidatures (CSV)',
-      '3 comptes recruteurs',
-    ],
-  },
-  PREMIUM: {
-    name: 'Premium',
-    priceXof: 60_000,
-    priceYearlyXof: 600_000,
-    jobPostQuota: -1,
-    featuredQuota: 10,
-    seatQuota: 10,
-    canSearchTalents: true,
-    canExportApplications: true,
-    hasPrioritySupport: true,
-    pitch: 'Pour les groupes et les campagnes de recrutement continues.',
-    features: [
-      'Offres actives illimitées',
-      '10 mises en avant par mois',
-      'Recherche et contact direct des talents',
-      'Export des candidatures (CSV)',
-      '10 comptes recruteurs',
-      'Support prioritaire et accompagnement Susuni Lab',
-    ],
-  },
 };
 
 /** Duree de publication par defaut d'une offre validee, en jours. */

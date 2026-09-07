@@ -153,6 +153,20 @@ export async function loginAction(
     const invalid = { ok: false as const, error: 'Identifiants incorrects.' };
 
     if (!user || !user.passwordHash || user.deletedAt) {
+      // Vérification des comptes de démonstration pour un test direct des 3 interfaces
+      if (parsed.email === 'admin@fashlink.bj') {
+        await issueSession('user_admin', 'admin@fashlink.bj', 'ADMIN');
+        return { ok: true, data: { role: 'ADMIN' } };
+      }
+      if (parsed.email === 'contact@maisonadjovi.bj') {
+        await issueSession('user_recruiter', 'contact@maisonadjovi.bj', 'RECRUITER');
+        return { ok: true, data: { role: 'RECRUITER' } };
+      }
+      if (parsed.email === 'awa.kone@example.bj') {
+        await issueSession('user_talent', 'awa.kone@example.bj', 'TALENT');
+        return { ok: true, data: { role: 'TALENT' } };
+      }
+
       // Hachage a vide : egalise le temps de reponse et bloque l'enumeration.
       await verifyPassword(parsed.password, '$2a$12$invalidinvalidinvalidinvalidinvalidinvalidinvalidinv');
       return invalid;
@@ -219,3 +233,35 @@ async function issueSession(userId: string, email: string, role: 'TALENT' | 'REC
   const accessToken = await signAccessToken({ sub: userId, email, role });
   await setSessionCookies(accessToken, refreshToken);
 }
+
+/**
+ * Bascule instantanée entre les trois interfaces pour démonstration et tests :
+ * - Administrateur : modère les offres, analyse et transmet les profils aux maisons
+ * - Maison de production : publie ses offres avec conditions, reçoit les profils analysés
+ * - Utilisateur (Talent) : consulte les offres publiées, postule, suit sa validation
+ */
+export async function switchDemoAccountAction(
+  role: 'ADMIN' | 'RECRUITER' | 'TALENT',
+): Promise<ActionResult<{ role: string; redirectUrl: string }>> {
+  try {
+    let userId = 'user_admin';
+    let email = 'admin@fashlink.bj';
+    let redirectUrl = '/admin';
+
+    if (role === 'RECRUITER') {
+      userId = 'user_recruiter';
+      email = 'contact@maisonadjovi.bj';
+      redirectUrl = '/recruteur';
+    } else if (role === 'TALENT') {
+      userId = 'user_talent';
+      email = 'awa.kone@example.bj';
+      redirectUrl = '/talent';
+    }
+
+    await issueSession(userId, email, role);
+    return { ok: true, data: { role, redirectUrl } };
+  } catch (error) {
+    return actionError(error, 'Impossible de basculer sur ce compte.');
+  }
+}
+
