@@ -46,7 +46,11 @@ export async function middleware(request: NextRequest) {
 }
 
 function redirectToLogin(request: NextRequest, from: string) {
-  const url = new URL('/connexion', request.url);
+  // L'authentification se fait en modale, montee dans le layout : il n'y a
+  // pas de page /connexion. On renvoie sur l'aiguillage en demandant son
+  // ouverture, et `next` ramenera l'utilisateur ou il voulait aller.
+  const url = new URL('/', request.url);
+  url.searchParams.set('auth', 'connexion');
   url.searchParams.set('next', from);
   return NextResponse.redirect(url);
 }

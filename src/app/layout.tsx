@@ -1,4 +1,7 @@
+import { Suspense } from 'react';
 import type { Metadata, Viewport } from 'next';
+
+import { AuthDialog } from '@/components/auth/AuthDialog';
 import { Poppins } from 'next/font/google';
 
 import { getAppUrl } from '@/lib/app-url';
@@ -79,6 +82,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Aller au contenu principal
         </a>
         <div id="contenu">{children}</div>
+
+        {/* Montee ici plutot que page par page : « Se connecter » doit ouvrir
+            la modale depuis n'importe quel ecran. `useSearchParams` impose la
+            frontiere Suspense. */}
+        <Suspense fallback={null}>
+          <AuthDialog />
+        </Suspense>
       </body>
     </html>
   );

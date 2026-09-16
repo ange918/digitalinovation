@@ -1,5 +1,7 @@
 import 'server-only';
 
+import { redirect } from 'next/navigation';
+
 import type { UserRole } from '@prisma/client';
 
 import { getCurrentUser, type CurrentUser } from '@/lib/auth';
@@ -101,54 +103,35 @@ export async function requireAdmin(): Promise<CurrentUser> {
 }
 
 /**
- * Garde pour Server Components : assure l'accès direct aux trois interfaces
- * (Admin, Maison, Utilisateur) avec profil de démonstration préchargé.
+ * Garde pour Server Components.
+ *
+ * Elle avait ete neutralisee pour permettre de parcourir les trois interfaces
+ * sans compte : elle retournait un utilisateur fabrique au lieu de refuser.
+ * Le tableau de bord administrateur — qui donne vue sur l'ensemble des talents,
+ * des maisons et de leurs demandes — devenait alors accessible a quiconque
+ * franchissait le middleware. Seul ce dernier protegeait encore les routes,
+ * sans defense en profondeur derriere lui.
+ *
+ * Elle refuse de nouveau : session absente ou expiree, on renvoie vers
+ * l'aiguillage en ouvrant la modale d'authentification, `next` ramenant
+ * l'utilisateur ou il voulait aller ; role insuffisant, on renvoie vers /403.
+ *
+ * Pour parcourir les interfaces en developpement, les comptes du jeu de
+ * demonstration font l'affaire (voir `prisma/seed.ts`).
  */
 export async function requirePage(
   roles: UserRole[],
-  _path?: string,
+  currentPath: string,
 ): Promise<CurrentUser> {
-  void _path;
   const user = await getCurrentUser();
-  if (user && roles.includes(user.role)) {
-    return user;
+
+  if (!user) {
+    redirect(`/?auth=connexion&next=${encodeURIComponent(currentPath)}`);
   }
 
-  // Accès direct et fluide aux 3 interfaces pour les tests
-  if (roles.includes('ADMIN')) {
-    return {
-      id: 'user_admin',
-      email: 'admin@fashlink.bj',
-      role: 'ADMIN',
-      firstName: 'Aïcha',
-      lastName: 'Soglo',
-      avatarUrl: null,
-      companyId: null,
-      profileId: null,
-    };
+  if (!roles.includes(user.role)) {
+    redirect('/403');
   }
 
-  if (roles.includes('RECRUITER')) {
-    return {
-      id: 'user_recruiter',
-      email: 'contact@maisonadjovi.bj',
-      role: 'RECRUITER',
-      firstName: 'Koffi',
-      lastName: 'Adjovi',
-      avatarUrl: null,
-      companyId: 'comp_1',
-      profileId: null,
-    };
-  }
-
-  return {
-    id: 'user_talent',
-    email: 'awa.kone@example.bj',
-    role: 'TALENT',
-    firstName: 'Awa',
-    lastName: 'Koné',
-    avatarUrl: null,
-    companyId: null,
-    profileId: 'prof_1',
-  };
+  return user;
 }

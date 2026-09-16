@@ -6,39 +6,71 @@ import { RECRUITER_BENEFITS, TALENT_BENEFITS, type Benefit } from '@/lib/landing
 /**
  * Section « ce que vous gagnez ».
  *
- * C'est la premiere chose que le visiteur lit apres le hero : ce qu'il obtient
- * en entrant dans la base. Deux colonnes, une par public, pour qu'il se
- * reconnaisse immediatement sans avoir a lire l'autre.
+ * Premiere chose que le visiteur lit apres le carrousel : ce qu'il obtient en
+ * entrant dans la base.
+ *
+ * `audience` restreint l'affichage a un seul public. Les deux parcours d'entree
+ * sont separes — sur /talents, montrer la colonne des maisons ne ferait que
+ * diluer le propos.
  */
-export function BenefitsSection() {
+export function BenefitsSection({
+  audience = 'both',
+}: {
+  audience?: 'talent' | 'maison' | 'both';
+}) {
+  const showTalent = audience === 'talent' || audience === 'both';
+  const showMaison = audience === 'maison' || audience === 'both';
+
+  const intro =
+    audience === 'maison'
+      ? "FASHLINK recrute pour vous. Vous exprimez un besoin, nous constituons l'equipe et nous la mettons a votre disposition."
+      : audience === 'talent'
+        ? "FASHLINK n'est pas un mur d'annonces. Les maisons passent par nous, et nous vous mettons en relation."
+        : "FASHLINK n'est pas un mur d'annonces. C'est un annuaire vivant de l'ecosysteme mode, ou les profils et les maisons se trouvent.";
+
   return (
     <Section
       id="avantages"
       tone="warm"
       eyebrow="Pourquoi s’inscrire"
-      title="Ce que vous gagnez à entrer dans la base"
-      intro="FASHLINK n’est pas un mur d’annonces. C’est un annuaire vivant de l’écosystème mode, où les profils et les maisons se trouvent."
+      title={
+        audience === 'maison'
+          ? 'Ce que vous gagnez à passer par FASHLINK'
+          : 'Ce que vous gagnez à entrer dans la base'
+      }
+      intro={intro}
     >
-      <div className="grid gap-6 lg:grid-cols-2">
-        <BenefitColumn
-          icon={<UsersIcon className="h-5 w-5" />}
-          audience="Talents"
-          title="Vous cherchez un poste"
-          note="Gratuit, sans limite de durée"
-          benefits={TALENT_BENEFITS}
-          ctaLabel="Créer mon profil talent"
-          ctaHref="/?auth=inscription&role=talent"
-          highlighted
-        />
-        <BenefitColumn
-          icon={<BuildingIcon className="h-5 w-5" />}
-          audience="Maisons"
-          title="Vous recrutez"
-          note="Transmission de profils analysés & vérifiés"
-          benefits={RECRUITER_BENEFITS}
-          ctaLabel="Inscrire ma maison"
-          ctaHref="/?auth=inscription&role=recruteur"
-        />
+      <div
+        className={
+          audience === 'both'
+            ? 'grid gap-6 lg:grid-cols-2'
+            : 'grid gap-6 lg:max-w-2xl'
+        }
+      >
+        {showTalent && (
+          <BenefitColumn
+            icon={<UsersIcon className="h-5 w-5" />}
+            audience="Talents"
+            title="Vous cherchez un poste"
+            note="Gratuit, sans limite de durée"
+            benefits={TALENT_BENEFITS}
+            ctaLabel="Créer mon profil talent"
+            ctaHref="?auth=inscription&role=talent"
+            highlighted
+          />
+        )}
+        {showMaison && (
+          <BenefitColumn
+            icon={<BuildingIcon className="h-5 w-5" />}
+            audience="Maisons"
+            title="Vous recrutez"
+            note="Transmission de profils analysés & vérifiés"
+            benefits={RECRUITER_BENEFITS}
+            ctaLabel="Inscrire ma maison"
+            ctaHref="?auth=inscription&role=recruteur"
+            highlighted={audience === 'maison'}
+          />
+        )}
       </div>
     </Section>
   );
