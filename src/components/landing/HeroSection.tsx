@@ -49,7 +49,7 @@ export function HeroSection() {
             <ButtonLink
               href="/admin"
               size="lg"
-              variant="outline"
+              variant="secondary"
               className="text-ink-muted hover:text-midnight-900"
             >
               Accès Administration

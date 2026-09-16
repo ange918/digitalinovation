@@ -392,7 +392,7 @@ export function AdminDashboardView({
                           {CATEGORY_LABELS[job.category as keyof typeof CATEGORY_LABELS] || job.category}
                         </span>
                         <span className="rounded-md bg-canvas-warm px-2.5 py-1 text-xs font-medium text-ink-muted">
-                          {JOB_TYPES[job.jobType as keyof typeof JOB_TYPES] || job.jobType}
+                          {JOB_TYPES[job.jobType as keyof typeof JOB_TYPES]?.label ?? job.jobType}
                         </span>
                         {job.city && (
                           <span className="flex items-center gap-1 text-xs text-ink-muted">
@@ -401,7 +401,7 @@ export function AdminDashboardView({
                           </span>
                         )}
                         <span className="text-xs text-ochre-700 font-medium">
-                          Rémunération : {formatSalaryRange(job.salaryMinXof, job.salaryMaxXof, job.salaryPeriod)}
+                          Rémunération : {formatSalaryRange(job.salaryMinXof ?? null, job.salaryMaxXof ?? null, job.salaryPeriod ?? null, true)}
                         </span>
                       </div>
 

@@ -178,7 +178,7 @@ export function ThreeInterfacesSection() {
             <ButtonLink
               id="btn-goto-admin"
               href="/admin"
-              variant="outline"
+              variant="secondary"
               className="w-full justify-center border-amber-300 text-amber-950 hover:bg-amber-100/60"
             >
               Accéder à l&apos;Administration

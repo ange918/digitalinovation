@@ -8,6 +8,7 @@ import { PrismaClient } from '@prisma/client';
 
 interface MockCompany {
   id: string;
+  userId?: string;
   name: string;
   slug: string;
   logoUrl: string | null;
@@ -45,9 +46,9 @@ interface MockJob {
   durationMonths: number | null;
   isFeatured: boolean;
   status: string;
-  publishedAt: Date;
+  publishedAt: Date | null;
   submittedAt: Date;
-  reviewedAt: Date;
+  reviewedAt: Date | null;
   expiresAt: Date | null;
   viewCount: number;
   applicationCount: number;

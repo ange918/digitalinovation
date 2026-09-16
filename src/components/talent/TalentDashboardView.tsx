@@ -27,7 +27,8 @@ export interface TalentUser {
 }
 
 export interface TalentProfile {
-  headline: string;
+  /** Nullable : un profil fraichement cree n'a pas encore d'accroche. */
+  headline?: string | null;
   bio?: string | null;
   city?: string | null;
   country?: string | null;
@@ -275,7 +276,7 @@ export function TalentDashboardView({
                           {CATEGORY_LABELS[job.category as keyof typeof CATEGORY_LABELS] || job.category}
                         </span>
                         <span className="rounded bg-canvas-warm px-2.5 py-1 text-xs text-ink-muted">
-                          {JOB_TYPES[job.jobType as keyof typeof JOB_TYPES] || job.jobType}
+                          {JOB_TYPES[job.jobType as keyof typeof JOB_TYPES]?.label ?? job.jobType}
                         </span>
                         {job.city && (
                           <span className="flex items-center gap-1 text-xs text-ink-muted">
@@ -284,7 +285,7 @@ export function TalentDashboardView({
                           </span>
                         )}
                         <span className="text-xs text-ochre-700 font-medium">
-                          Rémunération : {formatSalaryRange(job.salaryMinXof, job.salaryMaxXof, job.salaryPeriod)}
+                          Rémunération : {formatSalaryRange(job.salaryMinXof ?? null, job.salaryMaxXof ?? null, job.salaryPeriod ?? null, true)}
                         </span>
                       </div>
 
