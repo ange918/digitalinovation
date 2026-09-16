@@ -7,29 +7,34 @@ import { CATEGORIES, CATEGORY_ORDER } from '@/lib/constants';
  * Liens du pied de page.
  * Uniquement des ancres de la landing et des pages qui existent : aucun 404.
  */
+/**
+ * Liens du pied de page.
+ * Les ancres visent la page du public concerne : la racine n'est plus qu'un
+ * aiguillage, elle ne porte plus de sections.
+ */
 const COLUMNS = [
   {
     title: 'Talents',
     links: [
-      { href: '/talent', label: 'Espace Candidat & Profil' },
-      { href: '/offres', label: 'Parcourir les offres' },
-      { href: '/#avantages', label: 'Pourquoi s’inscrire' },
+      { href: '/talents', label: 'Découvrir FASHLINK' },
+      { href: '/talents#avantages', label: 'Pourquoi s’inscrire' },
+      { href: '/offres', label: 'Offres en ligne' },
     ],
   },
   {
     title: 'Maisons',
     links: [
-      { href: '/recruteur', label: 'Espace Maison de production' },
-      { href: '/#interfaces', label: 'Les 3 interfaces' },
-      { href: '/#fonctionnement', label: 'Comment ça marche' },
+      { href: '/maisons', label: 'Nous confier un besoin' },
+      { href: '/maisons#avantages', label: 'Comment nous travaillons' },
+      { href: '/maisons#interfaces', label: 'Le circuit d’une demande' },
     ],
   },
   {
-    title: 'Administration',
+    title: 'FASHLINK',
     links: [
-      { href: '/admin', label: 'Espace Administrateur' },
-      { href: '/#faq', label: 'Questions fréquentes' },
-      { href: '/?auth=connexion', label: 'Se connecter' },
+      { href: '/talents#faq', label: 'Questions fréquentes' },
+      { href: '/talents#categories', label: 'Les six métiers' },
+      { href: '?auth=connexion', label: 'Se connecter' },
     ],
   },
 ];

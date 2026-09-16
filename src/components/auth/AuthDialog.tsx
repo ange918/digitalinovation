@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState, useTransition } from 'react';
 
 import { Button } from '@/components/ui/Button';
@@ -23,6 +23,9 @@ type Role = 'TALENT' | 'RECRUITER';
 export function AuthDialog() {
   const router = useRouter();
   const params = useSearchParams();
+  // La modale s'ouvre depuis /talents comme depuis /maisons : la refermer doit
+  // ramener sur la page d'ou l'on vient, pas ejecter vers l'accueil.
+  const pathname = usePathname();
 
   const auth = params.get('auth');
   const mode: Mode | null =
@@ -86,7 +89,7 @@ export function AuthDialog() {
     rest.delete('role');
     rest.delete('next');
     const qs = rest.toString();
-    router.push(qs ? `/?${qs}` : '/', { scroll: false });
+    router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
   }
 
   function switchMode(target: Mode) {
@@ -95,7 +98,7 @@ export function AuthDialog() {
     search.set('auth', target);
     if (role === 'RECRUITER') search.set('role', 'recruteur');
     if (nextPath) search.set('next', nextPath);
-    router.push(`/?${search.toString()}`, { scroll: false });
+    router.push(`${pathname}?${search.toString()}`, { scroll: false });
   }
 
   /**

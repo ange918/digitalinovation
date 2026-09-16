@@ -10,11 +10,9 @@ import { cn } from '@/lib/utils';
  * Navigation principale mettant en valeur les 3 interfaces et les offres.
  */
 const NAV = [
-  { href: '/#interfaces', label: 'Les 3 Interfaces' },
+  { href: '/talents', label: 'Je cherche du travail' },
+  { href: '/maisons', label: 'Je suis une maison' },
   { href: '/offres', label: 'Offres en ligne' },
-  { href: '/talent', label: 'Espace Candidats' },
-  { href: '/recruteur', label: 'Espace Maisons' },
-  { href: '/admin', label: 'Administration' },
 ];
 
 /** En-tete global. Server Component : la session est lue sans JS cote client. */
@@ -57,12 +55,12 @@ export async function SiteHeader({ user: propUser }: { user?: CurrentUser | null
           ) : (
             <>
               <Link
-                href="/?auth=connexion"
+                href="?auth=connexion"
                 className="hidden text-body-sm font-medium text-ink-muted transition-colors hover:text-midnight-900 sm:block"
               >
                 Se connecter
               </Link>
-              <ButtonLink href="/?auth=inscription" size="sm">
+              <ButtonLink href="/talents" size="sm">
                 Rejoindre
               </ButtonLink>
             </>

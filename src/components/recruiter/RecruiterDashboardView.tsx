@@ -373,7 +373,7 @@ export function RecruiterDashboardView({
                           : 'border-line bg-canvas text-ink-muted hover:border-midnight-300',
                       )}
                     >
-                      {JOB_TYPES[t]}
+                      {JOB_TYPES[t]?.label}
                     </button>
                   ))}
                 </div>
@@ -502,7 +502,7 @@ export function RecruiterDashboardView({
                           {CATEGORY_LABELS[job.category as keyof typeof CATEGORY_LABELS] || job.category}
                         </span>
                         <span className="rounded bg-canvas-warm px-2 py-0.5 text-xs text-ink-muted">
-                          {JOB_TYPES[job.jobType as keyof typeof JOB_TYPES] || job.jobType}
+                          {JOB_TYPES[job.jobType as keyof typeof JOB_TYPES]?.label ?? job.jobType}
                         </span>
                         <span className="text-xs text-ink-muted">
                           {job.city || 'Cotonou'}
@@ -534,7 +534,7 @@ export function RecruiterDashboardView({
 
                   <div className="flex flex-wrap items-center justify-between border-t border-line pt-3 text-xs text-ink-muted">
                     <span>
-                      Rémunération : {formatSalaryRange(job.salaryMinXof, job.salaryMaxXof, job.salaryPeriod)}
+                      Rémunération : {formatSalaryRange(job.salaryMinXof ?? null, job.salaryMaxXof ?? null, job.salaryPeriod ?? null, true)}
                     </span>
                     {isActive && (
                       <Link

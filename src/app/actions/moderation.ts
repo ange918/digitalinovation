@@ -358,7 +358,10 @@ export async function forwardCandidateToCompanyAction(
         await tx.notification.create({
           data: {
             userId: app.job.company.userId,
-            type: 'APPLICATION_SHORTLISTED',
+            // Provisoire : l'enum NotificationType n'a pas de valeur dediee a
+            // la transmission d'un profil par FASHLINK. Un type propre
+            // (PROFILE_TRANSMITTED) demanderait une migration — a arbitrer.
+            type: 'APPLICATION_STATUS_CHANGED',
             title: 'Profil analysé & transmis par FASHLINK',
             body: `L'administrateur vous a transmis le profil de ${app.user.firstName} ${app.user.lastName} pour votre annonce « ${app.job.title} ». Analyse admin : « ${parsed.adminNote} ».`,
             href: `/recruteur#candidats`,
