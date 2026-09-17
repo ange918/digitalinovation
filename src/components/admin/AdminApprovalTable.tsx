@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState, useTransition } from 'react';
 
@@ -30,12 +29,16 @@ export interface PendingJobRow {
   salaryMaxXof: number | null;
   salaryPeriod: string | null;
   showSalary: boolean;
+  /** Nombre de personnes demandees par la maison. */
+  headcount: number;
+  /** Duree de la mission, en mois. Null si sans terme. */
+  durationMonths: number | null;
   submittedAt: Date | string | null;
   company: {
     name: string;
     slug: string;
     isVerified: boolean;
-    /** Nombre d'offres deja validees : un premier depot merite plus d'attention. */
+    /** Demandes deja publiees : un premier depot merite plus d'attention. */
     approvedJobsCount: number;
   };
 }
@@ -47,10 +50,14 @@ interface AdminApprovalTableProps {
 type RowState = { status: 'idle' } | { status: 'working' } | { status: 'done'; action: 'approved' | 'rejected' };
 
 /**
- * File de moderation FASHLINK.
+ * File des demandes recues.
+ *
+ * C'est le point d'entree du metier : une maison exprime un besoin, elle seule
+ * et l'administrateur le voient. Publier rend la demande visible des talents ;
+ * jusque-la elle n'existe nulle part ailleurs.
  *
  * Principes d'interface :
- *  - Une decision = un clic. Le rejet ouvre un motif car il part au recruteur.
+ *  - Une decision = un clic. Le rejet ouvre un motif car il part a la maison.
  *  - La ligne traitee reste affichee, grisee, avec la decision prise : l'equipe
  *    voit ce qu'elle vient de faire au lieu de voir la ligne disparaitre.
  *  - Aucune couleur de fond sur les lignes : la hierarchie tient au filet et
@@ -115,23 +122,23 @@ export function AdminApprovalTable({ jobs }: AdminApprovalTableProps) {
       <header className="flex flex-col gap-4 border-b border-line p-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="font-bold text-title-lg text-midnight-900">
-            File de validation
+            Demandes reçues
           </h2>
           <p className="mt-1 text-body-sm text-ink-muted">
             {remaining === 0
-              ? 'Aucune offre en attente. La file est vide.'
-              : `${remaining} offre${remaining > 1 ? 's' : ''} en attente de décision.`}
+              ? 'Aucune demande en attente. La file est vide.'
+              : `${remaining} demande${remaining > 1 ? 's' : ''} en attente de décision.`}
           </p>
         </div>
 
         <label className="relative w-full sm:w-72">
-          <span className="sr-only">Filtrer par titre ou entreprise</span>
+          <span className="sr-only">Filtrer par métier ou maison</span>
           <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-faint" />
           <input
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Titre ou maison…"
+            placeholder="Métier ou maison…"
             className={cn(
               'h-10 w-full rounded-pill border border-line bg-canvas pl-9 pr-4',
               'text-body-sm text-midnight-900 placeholder:text-ink-faint',
@@ -162,9 +169,10 @@ export function AdminApprovalTable({ jobs }: AdminApprovalTableProps) {
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-line">
-                  <Th className="pl-6">Offre</Th>
+                  <Th className="pl-6">Demande</Th>
                   <Th>Maison</Th>
                   <Th>Catégorie</Th>
+                  <Th>Postes</Th>
                   <Th>Rémunération</Th>
                   <Th>Soumise</Th>
                   <Th className="pr-6 text-right">Décision</Th>
@@ -184,12 +192,9 @@ export function AdminApprovalTable({ jobs }: AdminApprovalTableProps) {
                       )}
                     >
                       <td className="max-w-xs py-4 pl-6 pr-4">
-                        <Link
-                          href={`/admin/offres/${job.id}`}
-                          className="line-clamp-1 font-medium text-midnight-900 underline-offset-2 hover:text-royal-600 hover:underline"
-                        >
+                        <p className="line-clamp-1 font-medium text-midnight-900">
                           {job.title}
-                        </Link>
+                        </p>
                         <p className="mt-0.5 text-caption text-ink-subtle">
                           {JOB_TYPES[job.jobType].label}
                           {job.city ? ` · ${job.city}` : ''}
@@ -205,13 +210,22 @@ export function AdminApprovalTable({ jobs }: AdminApprovalTableProps) {
                         </span>
                         {job.company.approvedJobsCount === 0 && (
                           <Badge tone="warning" className="mt-1">
-                            1re offre
+                            1re demande
                           </Badge>
                         )}
                       </td>
 
                       <td className="py-4 pr-4">
                         <CategoryTag category={job.category} variant="code" />
+                      </td>
+
+                      <td className="py-4 pr-4 text-body-sm text-ink-muted tabular">
+                        {job.headcount} poste{job.headcount > 1 ? 's' : ''}
+                        {job.durationMonths ? (
+                          <span className="block text-caption text-ink-subtle">
+                            {job.durationMonths} mois
+                          </span>
+                        ) : null}
                       </td>
 
                       <td className="py-4 pr-4 text-body-sm text-ink-muted tabular" suppressHydrationWarning>
@@ -255,12 +269,7 @@ export function AdminApprovalTable({ jobs }: AdminApprovalTableProps) {
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <Link
-                        href={`/admin/offres/${job.id}`}
-                        className="font-medium text-midnight-900 hover:text-royal-600"
-                      >
-                        {job.title}
-                      </Link>
+                      <p className="font-medium text-midnight-900">{job.title}</p>
                       <p className="mt-1 flex items-center gap-1.5 text-caption text-ink-muted">
                         {job.company.name}
                         {job.company.isVerified && (
@@ -272,7 +281,9 @@ export function AdminApprovalTable({ jobs }: AdminApprovalTableProps) {
                   </div>
 
                   <p className="mt-3 text-caption text-ink-subtle" suppressHydrationWarning>
-                    {JOB_TYPES[job.jobType].label}
+                    {job.headcount} poste{job.headcount > 1 ? 's' : ''}
+                    {job.durationMonths ? ` · ${job.durationMonths} mois` : ''}
+                    {` · ${JOB_TYPES[job.jobType].label}`}
                     {job.city ? ` · ${job.city}` : ''}
                     {job.submittedAt ? ` · ${formatRelativeDate(job.submittedAt)}` : ''}
                   </p>
@@ -323,7 +334,7 @@ function RowActions({
     ) : (
       <Badge tone="danger">
         <XIcon className="h-3 w-3" />
-        Rejetée
+        Renvoyée
       </Badge>
     );
   }
@@ -337,7 +348,7 @@ function RowActions({
         disabled={disabled || state.status === 'working'}
       >
         <XIcon className="h-3.5 w-3.5" />
-        Rejeter
+        Renvoyer
       </Button>
       <Button
         size="sm"
@@ -347,15 +358,15 @@ function RowActions({
         disabled={disabled}
       >
         <CheckIcon className="h-3.5 w-3.5" />
-        Valider
+        Publier
       </Button>
     </div>
   );
 }
 
 /**
- * Motif de rejet. Obligatoire : il est envoye tel quel au recruteur, qui doit
- * pouvoir corriger son annonce sans nous ecrire.
+ * Motif du renvoi. Obligatoire : il part tel quel a la maison, qui doit
+ * pouvoir corriger sa demande sans nous ecrire.
  */
 function RejectDialog({
   job,
@@ -368,8 +379,9 @@ function RejectDialog({
 }) {
   const presets = [
     'Description trop succincte : précisez les missions et le profil recherché.',
+    'Nombre de postes ou durée de mission manquants.',
     'La rémunération annoncée ne respecte pas le salaire minimum en vigueur.',
-    'Offre hors du périmètre mode couvert par FASHLINK.',
+    'Besoin hors du périmètre mode couvert par FASHLINK.',
     'Coordonnées de contact direct dans le texte : les échanges passent par la messagerie FASHLINK.',
   ];
   const [reason, setReason] = useState('');
@@ -381,9 +393,9 @@ function RejectDialog({
       aria-labelledby="reject-title"
       className="fixed inset-0 z-50 flex items-end justify-center bg-midnight-950/40 p-4 backdrop-blur-sm sm:items-center"
     >
-      <div className="w-full max-w-lg animate-fade-in-up rounded-panel border border-line bg-white p-6 shadow-panel">
+      <div className="w-full max-w-lg animate-fade-in-up rounded-panel border border-line-strong bg-white p-6">
         <h3 id="reject-title" className="font-bold text-title-lg text-midnight-900">
-          Rejeter cette offre
+          Renvoyer cette demande
         </h3>
         <p className="mt-1.5 text-body-sm text-ink-muted">
           « {job.title} » — {job.company.name}
@@ -411,17 +423,13 @@ function RejectDialog({
         </div>
 
         <label className="mt-5 block">
-          <span className="fl-overline">Motif transmis au recruteur</span>
+          <span className="fl-overline">Motif transmis à la maison</span>
           <textarea
             value={reason}
             onChange={(event) => setReason(event.target.value)}
             rows={4}
             required
-            className={cn(
-              'mt-2 w-full rounded-card border border-line bg-canvas p-3',
-              'text-body-sm text-midnight-900 placeholder:text-ink-faint',
-              'focus:border-royal-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-royal-500/20',
-            )}
+            className="fl-field-area mt-2"
             placeholder="Expliquez précisément ce qui doit être corrigé."
           />
         </label>
@@ -435,7 +443,7 @@ function RejectDialog({
             disabled={reason.trim().length < 10}
             onClick={() => onConfirm(reason.trim())}
           >
-            Confirmer le rejet
+            Confirmer le renvoi
           </Button>
         </div>
       </div>
@@ -465,8 +473,8 @@ function EmptyState({ hasQuery }: { hasQuery: boolean }) {
       </p>
       <p className="mx-auto mt-1.5 max-w-sm text-body-sm text-ink-muted">
         {hasQuery
-          ? 'Aucune offre en attente ne correspond à cette recherche.'
-          : 'Toutes les offres soumises ont été traitées. Les nouvelles arriveront ici.'}
+          ? 'Aucune demande en attente ne correspond à cette recherche.'
+          : 'Toutes les demandes déposées ont été traitées. Les nouvelles arriveront ici.'}
       </p>
     </div>
   );

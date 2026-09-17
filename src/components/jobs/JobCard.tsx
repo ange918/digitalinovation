@@ -1,16 +1,16 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { JobTypeLabel } from '@/components/jobs/JobTypeLabel';
 import { Badge } from '@/components/ui/Badge';
 import { CategoryTag } from '@/components/ui/CategoryTag';
 import {
   BookmarkIcon,
-  BriefcaseIcon,
   ClockIcon,
   MapPinIcon,
   SparkIcon,
 } from '@/components/ui/Icons';
-import { EXPERIENCE_LEVELS, JOB_TYPES, WORK_MODES } from '@/lib/constants';
+import { EXPERIENCE_LEVELS, WORK_MODES } from '@/lib/constants';
 import { cn, formatRelativeDate, formatSalaryRange } from '@/lib/utils';
 import type { Category, ExperienceLevel, JobType, WorkMode } from '@prisma/client';
 
@@ -76,8 +76,8 @@ export function JobCard({ job, isSaved = false, onToggleSave, className }: JobCa
         'group relative isolate flex flex-col',
         'rounded-card border border-line bg-white p-5 sm:p-6',
         'transition-all duration-250 ease-editorial',
-        'hover:-translate-y-0.5 hover:border-line-strong hover:shadow-card-hover',
-        'focus-within:border-royal-200 focus-within:shadow-card-hover',
+        'hover:border-line-strong hover:bg-canvas',
+        'focus-within:border-royal-300',
         job.isFeatured && 'border-royal-200 bg-gradient-to-b from-royal-50/40 to-white',
         className,
       )}
@@ -126,8 +126,11 @@ export function JobCard({ job, isSaved = false, onToggleSave, className }: JobCa
         )}
       </header>
 
-      {/* ---- Titre : la signature serif de FASHLINK ---- */}
-      <h3 className="mt-4 font-bold text-title-md text-midnight-900">
+      {/* ---- Nature du contrat, lisible au defilement ---- */}
+      <JobTypeLabel jobType={job.jobType} className="mt-4 block" />
+
+      {/* ---- Titre ---- */}
+      <h3 className="mt-1.5 font-bold text-title-md text-midnight-900">
         <Link
           href={`/offres/${job.slug}`}
           className={cn(
@@ -143,10 +146,6 @@ export function JobCard({ job, isSaved = false, onToggleSave, className }: JobCa
 
       {/* ---- Meta contractuelles ---- */}
       <ul className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-caption text-ink-muted">
-        <li className="flex items-center gap-1.5">
-          <BriefcaseIcon className="h-3.5 w-3.5 text-ink-faint" />
-          {JOB_TYPES[job.jobType].label}
-        </li>
         <li className="flex items-center gap-1.5">
           <ClockIcon className="h-3.5 w-3.5 text-ink-faint" />
           {EXPERIENCE_LEVELS[job.experienceLevel].label}

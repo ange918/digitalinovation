@@ -20,10 +20,15 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-  // Supabase / PgBouncer : ajouter `directUrl = env("DIRECT_URL")` et la
-  // variable correspondante pour que les migrations contournent le pooler.
+  provider  = "postgresql"
+  // Connexion applicative. Sur Supabase, la chaine du pooler (port 6543),
+  // suffixee de `?schema=fashlink` pour isoler FASHLINK du schema `public`
+  // ou vit deja le site Susuni Lab.
+  url       = env("DATABASE_URL")
+  // Connexion directe (port 5432) : le pooler en mode transaction ne supporte
+  // ni les verrous consultatifs ni le DDL dont `prisma migrate` a besoin.
+  // Absente en local, ou DATABASE_URL suffit.
+  directUrl = env("DIRECT_URL")
 }
 
 // =============================================================================
@@ -103,6 +108,16 @@ enum ApplicationStatus {
   WITHDRAWN // retiree par le talent
 }
 
+/// Cycle de vie d'un placement : FASHLINK propose un talent, la maison
+/// accepte, la mission court, puis se termine.
+enum PlacementStatus {
+  PROPOSED
+  ACCEPTED
+  ACTIVE
+  ENDED
+  CANCELLED
+}
+
 /// Type de piece jointe d'un portfolio.
 enum MediaType {
   IMAGE
@@ -114,6 +129,10 @@ enum MediaType {
 enum NotificationType {
   APPLICATION_RECEIVED
   APPLICATION_STATUS_CHANGED
+  /// FASHLINK a analyse un profil et le transmet a la maison.
+  PROFILE_TRANSMITTED
+  /// Un talent est place chez une maison : la mission commence.
+  PLACEMENT_CREATED
   JOB_APPROVED
   JOB_REJECTED
   JOB_EXPIRING
@@ -129,34 +148,35 @@ enum NotificationType {
 /// Compte utilisateur unique, quel que soit le role.
 /// Un TALENT possede un Profile ; un RECRUITER possede une Company.
 model User {
-  id            String     @id @default(cuid())
-  email         String     @unique
+  id           String     @id @default(cuid())
+  email        String     @unique
   /// Hash bcrypt. Null si le compte provient d'un provider OAuth.
-  passwordHash  String?
-  role          UserRole   @default(TALENT)
-  status        UserStatus @default(PENDING_VERIFICATION)
+  passwordHash String?
+  role         UserRole   @default(TALENT)
+  status       UserStatus @default(PENDING_VERIFICATION)
 
-  firstName     String
-  lastName      String
+  firstName String
+  lastName  String
   /// Format E.164, ex. +22997000000. Sert au rapprochement Mobile Money.
-  phone         String?    @unique
-  avatarUrl     String?
-  locale        String     @default("fr")
+  phone     String? @unique
+  avatarUrl String?
+  locale    String  @default("fr")
 
   emailVerifiedAt DateTime?
   lastLoginAt     DateTime?
 
   // Relations
-  profile       Profile?
-  company       Company?
-  applications  Application[]
-  sentMessages     Message[]      @relation("MessageSender")
-  conversations    ConversationParticipant[]
-  notifications    Notification[]
-  savedJobs        SavedJob[]
-  reviewedJobs     Job[]          @relation("JobReviewer")
-  auditLogs        AuditLog[]
-  sessions         Session[]
+  profile            Profile?
+  company            Company?
+  applications       Application[]
+  sentMessages       Message[]                 @relation("MessageSender")
+  conversations      ConversationParticipant[]
+  notifications      Notification[]
+  savedJobs          SavedJob[]
+  reviewedJobs       Job[]                     @relation("JobReviewer")
+  placements         Placement[]
+  auditLogs          AuditLog[]
+  sessions           Session[]
   verificationTokens VerificationToken[]
 
   createdAt DateTime  @default(now())
@@ -170,16 +190,16 @@ model User {
 
 /// Session persistee (strategie JWT + revocation cote serveur).
 model Session {
-  id           String   @id @default(cuid())
-  userId       String
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   /// SHA-256 du refresh token : le token brut n'est jamais stocke.
-  tokenHash    String   @unique
-  userAgent    String?
-  ipAddress    String?
-  expiresAt    DateTime
-  revokedAt    DateTime?
-  createdAt    DateTime @default(now())
+  tokenHash String    @unique
+  userAgent String?
+  ipAddress String?
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
 
   @@index([userId, expiresAt])
   @@map("sessions")
@@ -187,14 +207,14 @@ model Session {
 
 /// Jeton a usage unique : verification d'email, reinitialisation de mot de passe.
 model VerificationToken {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tokenHash String   @unique
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
   purpose   String // EMAIL_VERIFICATION | PASSWORD_RESET
   expiresAt DateTime
   usedAt    DateTime?
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
 
   @@index([userId, purpose])
   @@map("verification_tokens")
@@ -206,12 +226,12 @@ model VerificationToken {
 
 /// Profil public d'un talent. Une seule ligne par User de role TALENT.
 model Profile {
-  id       String @id @default(cuid())
-  userId   String @unique
-  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   /// Slug public stable : /talents/awa-diallo-x7f2
-  slug     String @unique
+  slug String @unique
 
   headline String? @db.VarChar(120) // « Modeliste specialisee pret-a-porter »
   bio      String? @db.Text
@@ -227,11 +247,11 @@ model Profile {
   country String  @default("BJ") // ISO 3166-1 alpha-2
 
   /// Disponibilite et attentes.
-  openToWork      Boolean   @default(true)
-  openToJobTypes  JobType[] @default([EMPLOI, STAGE, FREELANCE])
-  availableFrom   DateTime?
+  openToWork     Boolean   @default(true)
+  openToJobTypes JobType[] @default([EMPLOI, STAGE, FREELANCE])
+  availableFrom  DateTime?
   /// Tarif journalier freelance en XOF (entier).
-  dailyRateXof    Int?
+  dailyRateXof   Int?
 
   portfolioUrl String?
   instagramUrl String?
@@ -255,22 +275,22 @@ model Profile {
 
 /// Piece de portfolio (book mannequin, planche de collection, video defile...).
 model PortfolioItem {
-  id        String    @id @default(cuid())
+  id        String  @id @default(cuid())
   profileId String
-  profile   Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
-  title       String    @db.VarChar(140)
-  description String?   @db.Text
-  mediaType   MediaType @default(IMAGE)
+  title        String    @db.VarChar(140)
+  description  String?   @db.Text
+  mediaType    MediaType @default(IMAGE)
   /// URL Cloudinary/S3 de l'original.
-  mediaUrl    String
+  mediaUrl     String
   /// Miniature 400px generee a l'upload — sert les listes en 3G.
   thumbnailUrl String?
   /// Placeholder base64 flou (~1 Ko) affiche pendant le chargement.
-  blurDataUrl  String?  @db.Text
+  blurDataUrl  String?   @db.Text
   category     Category?
   /// Ordre d'affichage dans le book.
-  position     Int      @default(0)
+  position     Int       @default(0)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -297,18 +317,18 @@ model Company {
   websiteUrl  String?
 
   /// Secteur principal au sein de l'ecosysteme mode.
-  categories  Category[]
-  city        String?
-  country     String     @default("BJ")
+  categories    Category[]
+  city          String?
+  country       String     @default("BJ")
   /// Numero IFU (Benin) ou registre du commerce local.
-  taxId       String?
-  employeeCount String?  // "1-10", "11-50", ...
+  taxId         String?
+  employeeCount String? // "1-10", "11-50", ...
 
   /// Badge « Entreprise verifiee » attribue par l'equipe FASHLINK.
-  isVerified   Boolean   @default(false)
-  verifiedAt   DateTime?
+  isVerified Boolean   @default(false)
+  verifiedAt DateTime?
 
-  jobs          Job[]
+  jobs Job[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -324,19 +344,19 @@ model Company {
 /// Offre d'emploi, de stage ou de mission freelance.
 /// Toute offre transite par PENDING_VALIDATION avant publication.
 model Job {
-  id        String @id @default(cuid())
+  id        String  @id @default(cuid())
   companyId String
   company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
-  slug        String  @unique
-  title       String  @db.VarChar(160)
-  description String  @db.Text
+  slug         String   @unique
+  title        String   @db.VarChar(160)
+  description  String   @db.Text
   /// Missions et profil recherche, en liste pour un rendu editorial aere.
   missions     String[]
   requirements String[]
   benefits     String[]
 
-  category  Category
+  category            Category
   /// Categories secondaires : une offre de direction artistique peut viser IMG + COM.
   secondaryCategories Category[] @default([])
 
@@ -357,16 +377,24 @@ model Job {
   /// Duree pour un stage ou une mission freelance, en mois.
   durationMonths Int?
 
+  /// Nombre de personnes demandees. Une maison ecrit « il me faut 6 stylistes
+  /// pour 6 mois » : `headcount` porte le 6, `durationMonths` l'autre.
+  headcount   Int @default(1)
+  /// Postes deja pourvus. Denormalise pour que le board affiche « 2 / 6 »
+  /// sans agreger les placements a chaque ligne ; maintenu dans la meme
+  /// transaction que la creation du placement.
+  filledCount Int @default(0)
+
   status JobStatus @default(DRAFT)
 
   // --- Workflow de moderation -------------------------------------------
-  submittedAt DateTime?
+  submittedAt     DateTime?
   /// Admin ayant statue.
-  reviewedById String?
-  reviewedBy   User?     @relation("JobReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
-  reviewedAt   DateTime?
+  reviewedById    String?
+  reviewedBy      User?     @relation("JobReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewedAt      DateTime?
   /// Motif communique au recruteur en cas de rejet.
-  rejectionReason String? @db.Text
+  rejectionReason String?   @db.Text
 
   publishedAt DateTime?
   /// Retrait automatique de la liste publique passe cette date.
@@ -374,7 +402,7 @@ model Job {
   closedAt    DateTime?
 
   /// Mise en avant reservee aux plans PRO / PREMIUM.
-  isFeatured   Boolean   @default(false)
+  isFeatured    Boolean   @default(false)
   featuredUntil DateTime?
 
   /// Compteurs denormalises pour le dashboard recruteur.
@@ -384,6 +412,7 @@ model Job {
   applications  Application[]
   savedBy       SavedJob[]
   conversations Conversation[]
+  placements    Placement[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -431,7 +460,7 @@ model Application {
 
   status ApplicationStatus @default(SUBMITTED)
 
-  coverLetter String? @db.Text
+  coverLetter       String? @db.Text
   /// Copie figee de l'URL du CV au moment de la candidature : le talent peut
   /// mettre son CV a jour sans alterer les dossiers deja envoyes.
   resumeUrlSnapshot String?
@@ -441,11 +470,12 @@ model Application {
   /// Evaluation 1-5 pour le tri de la shortlist.
   rating        Int?
 
-  viewedAt   DateTime?
-  decidedAt  DateTime?
+  viewedAt  DateTime?
+  decidedAt DateTime?
 
   events        ApplicationEvent[]
   conversations Conversation[]
+  placement     Placement?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -468,7 +498,7 @@ model ApplicationEvent {
   toStatus   ApplicationStatus
   /// Auteur du changement (recruteur, talent ou systeme). Null si automatique.
   actorId    String?
-  comment    String? @db.Text
+  comment    String?            @db.Text
 
   createdAt DateTime @default(now())
 
@@ -477,15 +507,61 @@ model ApplicationEvent {
 }
 
 // =============================================================================
+// PLACEMENTS
+// =============================================================================
+
+/// Mise a disposition effective d'un talent aupres d'une maison.
+///
+/// C'est le coeur du metier : FASHLINK ne met pas en relation, elle place.
+/// Le talent est recrute par FASHLINK, qui le place chez la maison ; la maison
+/// paie FASHLINK, FASHLINK paie le talent. `monthlyFeeXof` porte le premier
+/// montant, `monthlyPayXof` le second — leur difference est la marge, et les
+/// deux doivent rester distincts.
+model Placement {
+  id     String @id @default(cuid())
+  jobId  String
+  job    Job    @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// Candidature d'origine. Unique : un placement par candidature, sans quoi
+  /// `filledCount` pourrait etre incremente deux fois pour la meme personne.
+  applicationId String      @unique
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  status PlacementStatus @default(PROPOSED)
+
+  startsAt DateTime
+  /// Null pour une mission sans terme fixe.
+  endsAt   DateTime?
+
+  /// Montant mensuel facture a la maison, en XOF.
+  monthlyFeeXof Int?
+  /// Montant mensuel reverse au talent, en XOF.
+  monthlyPayXof Int?
+
+  /// Note interne de l'administrateur sur les conditions du placement.
+  adminNote String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([jobId])
+  @@index([userId, status])
+  @@index([status, startsAt])
+  @@map("placements")
+}
+
+// =============================================================================
 // MESSAGERIE INTERNE
 // =============================================================================
 
 /// Fil de discussion, generalement ouvert par un recruteur sur une candidature.
 model Conversation {
-  id     String @id @default(cuid())
+  id            String       @id @default(cuid())
   /// Contexte metier : offre et candidature d'origine (optionnels).
-  jobId  String?
-  job    Job?    @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  jobId         String?
+  job           Job?         @relation(fields: [jobId], references: [id], onDelete: SetNull)
   applicationId String?
   application   Application? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
 
@@ -512,10 +588,10 @@ model ConversationParticipant {
   userId         String
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  lastReadAt DateTime?
+  lastReadAt  DateTime?
   /// Compteur de non-lus, incremente a l'ecriture d'un message par un tiers.
-  unreadCount Int     @default(0)
-  isArchived  Boolean @default(false)
+  unreadCount Int       @default(0)
+  isArchived  Boolean   @default(false)
 
   createdAt DateTime @default(now())
 
@@ -532,7 +608,7 @@ model Message {
   senderId       String
   sender         User         @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
 
-  body        String  @db.Text
+  body        String   @db.Text
   /// Pieces jointes : URLs Cloudinary/S3.
   attachments String[] @default([])
 

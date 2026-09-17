@@ -78,7 +78,7 @@ export default async function TalentPage() {
               <p className="text-xs font-bold uppercase tracking-widest text-emerald-700">
                 Interface n°3 • Utilisateurs & Candidats
               </p>
-              <h1 className="mt-1 font-serif text-display-sm font-bold text-midnight-900 md:text-display-md">
+              <h1 className="mt-1 text-display-sm font-bold text-midnight-900 md:text-display-md">
                 Espace Talent de la Mode
               </h1>
             </div>

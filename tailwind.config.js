@@ -2,13 +2,21 @@
  * FASHLINK — Design System
  * Susuni Lab, Cotonou.
  *
- * Direction artistique : magazine de mode contemporain. Beaucoup de blanc,
- * une typographie serif affirmee pour les titres, une grille tres aeree,
- * des bordures fines plutot que des ombres lourdes.
+ * Direction artistique « L'Atelier » : le vocabulaire du plan de coupe et de
+ * la page imprimee. Papier chaud plutot que blanc pur, encre bleu nuit,
+ * grille aeree, et surtout AUCUNE ombre portee — la hierarchie tient au filet
+ * 1 px et au poids typographique.
  *
- * Regle de sobriete : le bleu roi est un ACCENT, pas un aplat. Il ne couvre
- * jamais plus de ~10 % d'un ecran (boutons primaires, liens, focus, actifs).
- * Le bleu nuit porte le texte et les surfaces sombres.
+ * Trois regles tiennent la direction :
+ *  1. Le bleu roi est un accent, jamais un aplat. Il couvre moins de ~2 % d'un
+ *     ecran : action primaire, lien actif, etat selectionne.
+ *  2. Aucune ombre. Un ecran qui a besoin d'une ombre a besoin d'un filet.
+ *  3. Jamais deux filets a moins de 24 px l'un de l'autre — au-dela, l'ecran
+ *     devient une grille de mots croises.
+ *
+ * Emprunt assume a la direction « Registre » : le statut de validation
+ * FASHLINK est le coeur du produit, il a ses deux couleurs dediees (ambre en
+ * attente, vert publie) et elles ne servent a rien d'autre.
  */
 
 /** @type {import('tailwindcss').Config} */
@@ -63,27 +71,32 @@ module.exports = {
           950: '#11162B',
           DEFAULT: '#1B2441',
         },
-        // --- Neutres chauds : fonds et bordures -----------------------------
+        // --- Papier : fonds et bordures, chauds et non gris -----------------
+        // Le passage du gris froid (#F9FAFB) au papier chaud est le seul
+        // changement qui se voit a l'oeil nu d'un bout a l'autre du produit.
         canvas: {
-          DEFAULT: '#F9FAFB', // fond d'application
-          alt: '#F8F9FA',
-          warm: '#FAFAF8', // fond des sections editoriales
+          DEFAULT: '#FBFAF8', // papier, jamais blanc pur
+          alt: '#F4F2ED', // fonds de section, lignes alternees
+          warm: '#F4F2ED',
         },
         ink: {
-          DEFAULT: '#1B2441', // texte principal
-          muted: '#5B6178', // texte secondaire
-          subtle: '#8A8FA3', // legendes, meta
-          faint: '#B4B8C5', // placeholders
+          DEFAULT: '#1B2441', // texte principal — 15,4:1 sur papier
+          muted: '#4A4F63', // texte secondaire — 8,6:1
+          subtle: '#8A8FA0', // legendes, meta — 3,3:1, reserve au non-essentiel
+          faint: '#B4B8C5', // placeholders uniquement, jamais porteur de sens
         },
         line: {
-          DEFAULT: '#E8EAEF', // bordure standard
-          strong: '#D5D8E1',
-          subtle: '#F0F1F5',
+          DEFAULT: '#E4E0D8', // filet standard : l'element structurant n°1
+          strong: '#D3CEC2',
+          subtle: '#EFEDE6',
         },
-        // --- Statuts : desatures pour rester dans la sobriete ---------------
-        success: { 50: '#EDF7F1', 500: '#2E7D5B', 700: '#1F5B41' },
-        warning: { 50: '#FDF6EC', 500: '#B57A1F', 700: '#8A5C13' },
-        danger: { 50: '#FBEFEF', 500: '#B3453F', 700: '#8A322D' },
+        // --- Statuts ---------------------------------------------------------
+        // `warning` porte « en validation FASHLINK » et `success` « publiee ».
+        // Les deux teintes 500 sont assombries par rapport aux precedentes pour
+        // passer AA en texte courant sur papier : #B57A1F n'y arrivait pas.
+        success: { 50: '#EEF4F0', 500: '#1F6B43', 700: '#175233' },
+        warning: { 50: '#F9F1E7', 500: '#A8620E', 700: '#864E0B' },
+        danger: { 50: '#F9EFEE', 500: '#B3453F', 700: '#8A322D' },
       },
 
       fontFamily: {
@@ -119,22 +132,19 @@ module.exports = {
       },
 
       borderRadius: {
-        // Angles doux mais jamais arrondis « bulle » : on reste sur du sobre.
-        card: '0.875rem',
-        panel: '1.25rem',
+        // Presque des angles droits : le rectangle est la forme du patron de
+        // couture et de la page imprimee. L'arrondi « bulle » est reserve aux
+        // badges et aux jetons de filtre, ou il sert a distinguer une etiquette
+        // d'un bouton.
+        card: '0.25rem', // 4px
+        panel: '0.375rem', // 6px
         pill: '9999px',
       },
 
       boxShadow: {
-        // Ombres tres basses opacites, teintees bleu nuit et non noir pur :
-        // c'est ce qui donne l'impression « papier glace » plutot que « web ».
-        subtle: '0 1px 2px 0 rgba(27, 36, 65, 0.04)',
-        card: '0 1px 3px rgba(27, 36, 65, 0.05), 0 8px 24px -12px rgba(27, 36, 65, 0.08)',
-        'card-hover': '0 2px 6px rgba(27, 36, 65, 0.06), 0 16px 40px -16px rgba(27, 36, 65, 0.14)',
-        panel: '0 4px 12px rgba(27, 36, 65, 0.05), 0 24px 56px -24px rgba(27, 36, 65, 0.16)',
-        // Bouton primaire : legere elevation coloree.
-        royal: '0 2px 8px -2px rgba(0, 120, 183, 0.4)',
-        // Anneau de focus accessible, reutilise partout.
+        // Une seule ombre subsiste, et ce n'est pas une ombre : l'anneau de
+        // focus. Tout le reste a ete retire — une surface qui appelait une
+        // ombre appelle en realite un filet.
         focus: '0 0 0 3px rgba(0, 120, 183, 0.22)',
         none: 'none',
       },

@@ -78,8 +78,8 @@ export async function approveJobAction(
         data: {
           userId: job.company.userId,
           type: 'JOB_APPROVED',
-          title: 'Offre validée et publiée',
-          body: `« ${job.title} » a été validée par l'administrateur et est maintenant en ligne pour les candidats jusqu'au ${expiresAt.toLocaleDateString('fr-FR')}.`,
+          title: 'Votre demande est en ligne',
+          body: `FASHLINK a publié « ${job.title} ». Les talents peuvent postuler jusqu'au ${expiresAt.toLocaleDateString('fr-FR')} ; nous vous transmettrons les profils retenus.`,
           href: `/offres/${job.slug}`,
           data: { jobId: job.id },
         },
@@ -164,8 +164,8 @@ export async function rejectJobAction(
         data: {
           userId: job.company.userId,
           type: 'JOB_REJECTED',
-          title: 'Offre a corriger',
-          body: `« ${job.title} » n'a pas ete publiee : ${parsed.reason}`,
+          title: 'Demande à corriger',
+          body: `« ${job.title} » n'a pas été publiée : ${parsed.reason}`,
           href: `/recruteur/offres/${job.id}`,
           data: { jobId: job.id },
         },
@@ -358,10 +358,7 @@ export async function forwardCandidateToCompanyAction(
         await tx.notification.create({
           data: {
             userId: app.job.company.userId,
-            // Provisoire : l'enum NotificationType n'a pas de valeur dediee a
-            // la transmission d'un profil par FASHLINK. Un type propre
-            // (PROFILE_TRANSMITTED) demanderait une migration — a arbitrer.
-            type: 'APPLICATION_STATUS_CHANGED',
+            type: 'PROFILE_TRANSMITTED',
             title: 'Profil analysé & transmis par FASHLINK',
             body: `L'administrateur vous a transmis le profil de ${app.user.firstName} ${app.user.lastName} pour votre annonce « ${app.job.title} ». Analyse admin : « ${parsed.adminNote} ».`,
             href: `/recruteur#candidats`,
@@ -375,7 +372,7 @@ export async function forwardCandidateToCompanyAction(
         data: {
           userId: app.user.id,
           type: 'APPLICATION_STATUS_CHANGED',
-          title: 'Profil validé et transmis à la maison !',
+          title: 'Votre profil a été transmis à la maison',
           body: `Votre profil a été analysé et validé par l'équipe FASHLINK, puis transmis à la maison ${app.job?.company?.name || 'de production'}.`,
           href: `/talent#candidatures`,
           data: { applicationId: app.id, jobId: app.job.id },

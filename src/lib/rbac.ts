@@ -22,80 +22,44 @@ export class UnauthorizedError extends Error {
 }
 
 /**
- * Garde pour Server Actions et Route Handlers : lève plutôt que rediriger,
- * afin que l'appelant puisse répondre en JSON.
- * En mode prévisualisation / démonstration, fournit un compte de repli si aucune
- * session active n'est enregistrée.
+ * Garde pour Server Actions et Route Handlers : leve plutot que rediriger,
+ * afin que l'appelant puisse repondre en JSON. `actionError` transforme le
+ * message en retour lisible cote interface.
+ *
+ * Ces gardes retournaient auparavant un compte de demonstration lorsqu'aucune
+ * session n'etait active — un ADMIN fabrique pour `requireAdmin()`. Toutes les
+ * actions d'administration (publier une demande, transmettre le profil d'un
+ * talent a une maison) etaient donc executables sans compte. Elles refusent.
  */
 export async function requireUser(): Promise<CurrentUser> {
   const user = await getCurrentUser();
   if (!user) {
-    // Profil de démonstration talent par défaut
-    return {
-      id: 'user_talent',
-      email: 'awa.kone@example.bj',
-      role: 'TALENT',
-      firstName: 'Awa',
-      lastName: 'Koné',
-      avatarUrl: null,
-      companyId: null,
-      profileId: 'prof_1',
-    };
+    throw new UnauthorizedError('Connectez-vous pour effectuer cette action.');
   }
   return user;
 }
 
 export async function requireRole(...roles: UserRole[]): Promise<CurrentUser> {
-  const user = await getCurrentUser();
-  if (user && roles.includes(user.role)) {
-    return user;
+  const user = await requireUser();
+
+  if (!roles.includes(user.role)) {
+    throw new ForbiddenError("Votre compte n'a pas les droits requis pour cette action.");
   }
 
-  // Si l'utilisateur n'est pas connecté ou n'a pas le rôle adéquat,
-  // bascule gracieusement sur le profil de démonstration correspondant.
-  if (roles.includes('ADMIN')) {
-    return {
-      id: 'user_admin',
-      email: 'admin@fashlink.bj',
-      role: 'ADMIN',
-      firstName: 'Aïcha',
-      lastName: 'Soglo',
-      avatarUrl: null,
-      companyId: null,
-      profileId: null,
-    };
-  }
-
-  if (roles.includes('RECRUITER')) {
-    return {
-      id: 'user_recruiter',
-      email: 'contact@maisonadjovi.bj',
-      role: 'RECRUITER',
-      firstName: 'Koffi',
-      lastName: 'Adjovi',
-      avatarUrl: null,
-      companyId: 'comp_1',
-      profileId: null,
-    };
-  }
-
-  return {
-    id: 'user_talent',
-    email: 'awa.kone@example.bj',
-    role: 'TALENT',
-    firstName: 'Awa',
-    lastName: 'Koné',
-    avatarUrl: null,
-    companyId: null,
-    profileId: 'prof_1',
-  };
+  return user;
 }
 
-/** Recruteur disposant d'une fiche entreprise complète. */
+/** Maison de mode disposant d'une fiche complete. */
 export async function requireRecruiter(): Promise<CurrentUser & { companyId: string }> {
   const user = await requireRole('RECRUITER');
-  const companyId = user.companyId || 'comp_1';
-  return { ...user, companyId };
+
+  if (!user.companyId) {
+    throw new ForbiddenError(
+      'Aucune maison n’est rattachée à ce compte. Complétez votre fiche avant de déposer une demande.',
+    );
+  }
+
+  return { ...user, companyId: user.companyId };
 }
 
 export async function requireAdmin(): Promise<CurrentUser> {

@@ -163,7 +163,7 @@ export function AuthDialog() {
     >
       <div
         ref={dialogRef}
-        className="my-auto w-full max-w-md animate-fade-in-up rounded-panel border border-line bg-white p-6 shadow-panel sm:p-8"
+        className="my-auto w-full max-w-md animate-fade-in-up rounded-panel border border-line-strong bg-white p-6 sm:p-8"
       >
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -370,12 +370,7 @@ function Field({
         type={type}
         value={value}
         onChange={(event) => onValueChange(event.target.value)}
-        className={cn(
-          'mt-1.5 h-11 w-full rounded-card border border-line bg-canvas px-3.5',
-          'text-body-sm text-midnight-900 placeholder:text-ink-faint',
-          'transition-colors duration-150 ease-editorial',
-          'focus:border-royal-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-royal-500/20',
-        )}
+        className="fl-field mt-1.5 h-11"
         {...props}
       />
       {hint && <span className="mt-1 block text-caption text-ink-subtle">{hint}</span>}

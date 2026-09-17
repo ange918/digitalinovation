@@ -69,12 +69,46 @@
   }
 
   /* --- Surface carte standard -------------------------------------------- */
+  /* Un filet, pas une ombre : c'est la regle de la direction « L'Atelier ». */
   .fl-card {
-    @apply rounded-card border border-line bg-white transition-all duration-250 ease-editorial;
+    @apply rounded-card border border-line bg-white;
   }
 
+  /* Au survol, la carte ne se souleve pas — elle s'affirme : le filet fonce
+     et le fond passe au papier. Aucune translation, donc aucun repaint de
+     mise en page sur un Android d'entree de gamme. */
   .fl-card-interactive {
-    @apply fl-card hover:-translate-y-0.5 hover:border-line-strong hover:shadow-card-hover;
+    @apply fl-card transition-colors duration-150 ease-editorial hover:border-line-strong hover:bg-canvas;
+  }
+
+  /* --- Entree de liste ---------------------------------------------------- */
+  /* Remplace la carte dans les listes : les offres et les lignes du board sont
+     separees par un filet, pas encloses dans une boite. C'est ce qui donne la
+     page de petites annonces imprimee plutot que l'empilement de cartes. */
+  .fl-entry {
+    @apply border-b border-line-subtle py-5 transition-colors duration-150 ease-editorial last:border-0 hover:bg-canvas-alt/50;
+  }
+
+  /* --- Champ de saisie ---------------------------------------------------- */
+  /* Pas de boite : un soulignement, comme une ligne a remplir sur un bon de
+     commande. Le filet passe a 2 px bleu roi au focus — la difference est
+     autant une epaisseur qu'une couleur, pour rester lisible sans percevoir la
+     teinte. Le label reste toujours visible au-dessus : le `placeholder` ne
+     remplace jamais un label. */
+  .fl-field {
+    @apply w-full rounded-none border-0 border-b border-line bg-transparent px-0 py-2.5;
+    @apply text-body-sm text-midnight-900 placeholder:text-ink-faint;
+    @apply transition-colors duration-150 ease-editorial;
+    @apply focus:border-b-2 focus:border-royal-500 focus:outline-none focus:ring-0;
+  }
+
+  /* Variante multiligne : meme logique, avec un filet complet car un simple
+     soulignement ne delimite plus rien sur quatre lignes de texte. */
+  .fl-field-area {
+    @apply w-full rounded-card border border-line bg-canvas p-3;
+    @apply text-body-sm text-midnight-900 placeholder:text-ink-faint;
+    @apply transition-colors duration-150 ease-editorial;
+    @apply focus:border-royal-500 focus:bg-white focus:outline-none focus:ring-0;
   }
 
   /* --- Filet de separation editorial ------------------------------------- */
