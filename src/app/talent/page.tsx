@@ -14,20 +14,14 @@ export const dynamic = 'force-dynamic';
 export default async function TalentPage() {
   const user = await requirePage(['TALENT', 'ADMIN'], '/talent');
 
-  const profile =
-    (await prisma.profile.findFirst({
-      where: { userId: user.id },
-    })) || {
-      id: 'prof_1',
-      userId: user.id,
-      headline: 'Modéliste & Patronnière senior — prêt-à-porter femme',
-      bio: "Spécialiste du patronage à plat et du montage d'échantillons en atelier. 6 ans d'expérience dans la mode en Afrique de l'Ouest.",
-      city: 'Cotonou',
-      country: 'BJ',
-      skills: ['Patronage à plat', 'Moulage', 'Gradation', 'Piqueuse plate', 'Surjeteuse', 'Contrôle qualité'],
-      experienceLevel: 'CONFIRME',
-      portfolioUrl: 'https://instagram.com/awakone_couture',
-    };
+  // Strictement le profil du compte connecte. Un profil de demonstration
+  // etait fabrique ici quand il n'en existait pas : le talent voyait des
+  // competences et un book qui n'etaient pas les siens.
+  const profile = await prisma.profile.findUnique({ where: { userId: user.id } });
+
+  if (!profile) {
+    return <NoProfileState />;
+  }
 
   const [publishedJobs, myApplications] = await Promise.all([
     prisma.job.findMany({
@@ -78,7 +72,7 @@ export default async function TalentPage() {
               <p className="text-xs font-bold uppercase tracking-widest text-emerald-700">
                 Interface n°3 • Utilisateurs & Candidats
               </p>
-              <h1 className="mt-1 font-serif text-display-sm font-bold text-midnight-900 md:text-display-md">
+              <h1 className="mt-1 text-display-sm font-bold text-midnight-900 md:text-display-md">
                 Espace Talent de la Mode
               </h1>
             </div>
@@ -100,6 +94,31 @@ export default async function TalentPage() {
           publishedJobs={publishedJobs}
           myApplications={myApplications}
         />
+      </main>
+    </>
+  );
+}
+
+/**
+ * Compte TALENT sans profil : cas reel juste apres l'inscription, le profil
+ * etant complete dans un second temps.
+ */
+function NoProfileState() {
+  return (
+    <>
+      <SiteHeader />
+
+      <main className="container py-16">
+        <div className="mx-auto max-w-xl rounded-card border border-line bg-white p-8 text-center">
+          <p className="fl-overline">Espace talent</p>
+          <h1 className="mt-2 font-bold text-display-sm text-midnight-900">
+            Votre profil n&apos;est pas encore créé
+          </h1>
+          <p className="mt-3 text-body text-ink-muted">
+            Complétez votre profil — métier, compétences, book — pour que
+            FASHLINK puisse vous proposer aux maisons.
+          </p>
+        </div>
       </main>
     </>
   );

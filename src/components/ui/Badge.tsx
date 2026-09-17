@@ -14,6 +14,13 @@ const TONES: Record<BadgeTone, string> = {
 interface BadgeProps {
   children: React.ReactNode;
   tone?: BadgeTone;
+  /**
+   * Point colore precedant le libelle. A activer des que la teinte porte une
+   * information — un statut de demande, de candidature ou de placement : la
+   * couleur seule ne doit jamais etre le seul vecteur (WCAG 1.4.1), et le
+   * point ajoute une difference de forme entre deux pastilles voisines.
+   */
+  dot?: boolean;
   className?: string;
 }
 
@@ -21,7 +28,7 @@ interface BadgeProps {
  * Pastille de statut. Bordure interne (`ring`) plutot que `border` : la
  * pastille ne prend pas un pixel de plus et reste alignee sur la ligne de base.
  */
-export function Badge({ children, tone = 'neutral', className }: BadgeProps) {
+export function Badge({ children, tone = 'neutral', dot = false, className }: BadgeProps) {
   return (
     <span
       className={cn(
@@ -31,6 +38,7 @@ export function Badge({ children, tone = 'neutral', className }: BadgeProps) {
         className,
       )}
     >
+      {dot && <StatusDot tone={tone} />}
       {children}
     </span>
   );

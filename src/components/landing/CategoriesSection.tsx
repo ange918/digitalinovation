@@ -25,7 +25,7 @@ export function CategoriesSection() {
             <li key={code}>
               <Link
                 href={`/offres?categorie=${code}`}
-                className="group flex h-full flex-col rounded-card border border-line bg-white p-6 transition-all duration-250 ease-editorial hover:-translate-y-0.5 hover:border-royal-200 hover:shadow-card-hover"
+                className="group flex h-full flex-col rounded-card border border-line bg-white p-6 transition-colors duration-150 ease-editorial hover:border-royal-300 hover:bg-canvas"
               >
                 <span className="fl-overline text-royal-500">{category.code}</span>
                 <h3 className="mt-3 text-title-md text-midnight-900">{category.label}</h3>

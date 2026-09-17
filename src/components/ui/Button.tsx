@@ -6,10 +6,13 @@ type Size = 'sm' | 'md' | 'lg';
 
 const VARIANTS: Record<Variant, string> = {
   // Le bleu roi n'apparait qu'ici : une seule action primaire par ecran.
+  // Aplat franc, sans elevation coloree — l'ombre a disparu avec la direction.
   primary:
-    'bg-royal-500 text-white shadow-royal hover:bg-royal-600 active:bg-royal-700 disabled:bg-royal-200',
+    'bg-royal-500 text-white hover:bg-royal-600 active:bg-royal-700 disabled:bg-royal-200',
+  // Filet encre plutot qu'anneau gris : le bouton secondaire est un rectangle
+  // cerne, comme un cadre de patron.
   secondary:
-    'bg-white text-midnight-900 ring-1 ring-inset ring-line-strong hover:bg-canvas-alt hover:ring-midnight-300 disabled:text-ink-faint',
+    'bg-transparent text-midnight-900 ring-1 ring-inset ring-midnight-900 hover:bg-canvas-alt disabled:text-ink-faint disabled:ring-line-strong',
   ghost: 'bg-transparent text-ink-muted hover:bg-canvas-alt hover:text-midnight-900',
   danger:
     'bg-white text-danger-700 ring-1 ring-inset ring-danger-500/30 hover:bg-danger-50 disabled:text-ink-faint',
@@ -24,7 +27,9 @@ const SIZES: Record<Size, string> = {
 };
 
 const BASE = cn(
-  'inline-flex items-center justify-center rounded-pill font-semibold',
+  // Rectangle a peine adouci : la pilule est reservee aux badges et aux jetons
+  // de filtre, ou elle distingue une etiquette d'une action.
+  'inline-flex items-center justify-center rounded-card font-semibold',
   'transition-all duration-150 ease-editorial',
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-royal-500 focus-visible:ring-offset-2',
   'disabled:cursor-not-allowed disabled:shadow-none',

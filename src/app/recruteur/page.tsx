@@ -14,18 +14,16 @@ export const dynamic = 'force-dynamic';
 export default async function RecruiterPage() {
   const user = await requirePage(['RECRUITER', 'ADMIN'], '/recruteur');
 
-  const company =
-    (await prisma.company.findFirst({
-      where: user.companyId ? { id: user.companyId } : undefined,
-    })) || {
-      id: 'comp_1',
-      name: 'Maison Adjovi',
-      slug: 'maison-adjovi',
-      city: 'Cotonou',
-      country: 'BJ',
-      isVerified: true,
-      description: 'Atelier de création et de production textile, prêt-à-porter haut de gamme et séries capsule.',
-    };
+  // Strictement la maison rattachee au compte. Un `findFirst` sans filtre
+  // renvoyait la premiere maison venue lorsque le compte n'en avait aucune :
+  // la maison A voyait les demandes et les talents de la maison B.
+  const company = user.companyId
+    ? await prisma.company.findUnique({ where: { id: user.companyId } })
+    : null;
+
+  if (!company) {
+    return <NoCompanyState />;
+  }
 
   const [jobs, candidates] = await Promise.all([
     prisma.job.findMany({
@@ -38,7 +36,11 @@ export default async function RecruiterPage() {
     prisma.application.findMany({
       where: {
         job: { companyId: company.id },
-        status: 'SHORTLISTED', // Profils analysés et transmis par l'administrateur
+        // Tout ce que FASHLINK a transmis, et la suite du parcours. Filtrer sur
+        // le seul SHORTLISTED faisait disparaitre de l'ecran de la maison le
+        // talent des qu'il etait place chez elle — au moment precis ou elle a
+        // le plus besoin de le voir.
+        status: { in: ['SHORTLISTED', 'INTERVIEW', 'OFFER', 'HIRED'] },
       },
       orderBy: { updatedAt: 'desc' },
       include: {
@@ -82,7 +84,7 @@ export default async function RecruiterPage() {
               <p className="text-xs font-bold uppercase tracking-widest text-ochre-700">
                 Interface n°2 • Maisons de production & Marques
               </p>
-              <h1 className="mt-1 font-serif text-display-sm font-bold text-midnight-900 md:text-display-md">
+              <h1 className="mt-1 text-display-sm font-bold text-midnight-900 md:text-display-md">
                 Espace Maison de Production
               </h1>
             </div>
@@ -103,6 +105,33 @@ export default async function RecruiterPage() {
           jobs={jobs}
           candidates={candidates}
         />
+      </main>
+    </>
+  );
+}
+
+/**
+ * Compte RECRUITER sans fiche maison : cas reel a l'inscription, la fiche
+ * etant creee dans un second temps. On le dit, plutot que d'afficher le
+ * tableau de bord d'une autre maison.
+ */
+function NoCompanyState() {
+  return (
+    <>
+      <SiteHeader />
+
+      <main className="container py-16">
+        <div className="mx-auto max-w-xl rounded-card border border-line bg-white p-8 text-center">
+          <p className="fl-overline">Espace maison</p>
+          <h1 className="mt-2 font-bold text-display-sm text-midnight-900">
+            Aucune maison rattachée à ce compte
+          </h1>
+          <p className="mt-3 text-body text-ink-muted">
+            Votre fiche maison n&apos;a pas encore été créée. Écrivez-nous et
+            l&apos;équipe FASHLINK la rattachera à votre compte — vous pourrez
+            alors déposer vos demandes de personnel.
+          </p>
+        </div>
       </main>
     </>
   );

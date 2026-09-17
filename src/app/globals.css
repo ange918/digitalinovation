@@ -69,12 +69,16 @@
   }
 
   /* --- Surface carte standard -------------------------------------------- */
+  /* Un filet, pas une ombre : c'est la regle de la direction « L'Atelier ». */
   .fl-card {
-    @apply rounded-card border border-line bg-white transition-all duration-250 ease-editorial;
+    @apply rounded-card border border-line bg-white;
   }
 
+  /* Au survol, la carte ne se souleve pas — elle s'affirme : le filet fonce
+     et le fond passe au papier. Aucune translation, donc aucun repaint de
+     mise en page sur un Android d'entree de gamme. */
   .fl-card-interactive {
-    @apply fl-card hover:-translate-y-0.5 hover:border-line-strong hover:shadow-card-hover;
+    @apply fl-card transition-colors duration-150 ease-editorial hover:border-line-strong hover:bg-canvas;
   }
 
   /* --- Filet de separation editorial ------------------------------------- */

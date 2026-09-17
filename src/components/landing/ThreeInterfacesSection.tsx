@@ -25,7 +25,7 @@ export function ThreeInterfacesSection() {
         >
           <div>
             <div className="flex items-center justify-between">
-              <span className="inline-flex h-11 w-11 items-center justify-center rounded-button bg-royal-50 text-royal-600">
+              <span className="inline-flex h-11 w-11 items-center justify-center rounded-card bg-royal-50 text-royal-600">
                 <UsersIcon className="h-6 w-6" />
               </span>
               <span className="rounded-full bg-royal-100/70 px-2.5 py-0.5 text-caption font-semibold text-royal-700">
@@ -80,7 +80,7 @@ export function ThreeInterfacesSection() {
         >
           <div>
             <div className="flex items-center justify-between">
-              <span className="inline-flex h-11 w-11 items-center justify-center rounded-button bg-midnight-50 text-midnight-800">
+              <span className="inline-flex h-11 w-11 items-center justify-center rounded-card bg-midnight-50 text-midnight-800">
                 <BuildingIcon className="h-6 w-6" />
               </span>
               <span className="rounded-full bg-midnight-100 px-2.5 py-0.5 text-caption font-semibold text-midnight-800">
@@ -139,7 +139,7 @@ export function ThreeInterfacesSection() {
         >
           <div>
             <div className="flex items-center justify-between">
-              <span className="inline-flex h-11 w-11 items-center justify-center rounded-button bg-amber-100 text-amber-900">
+              <span className="inline-flex h-11 w-11 items-center justify-center rounded-card bg-amber-100 text-amber-900">
                 <ShieldCheckIcon className="h-6 w-6" />
               </span>
               <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-caption font-semibold text-amber-900">

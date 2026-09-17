@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { Badge } from '@/components/ui/Badge';
 import { ButtonLink } from '@/components/ui/Button';
 import { CategoryTag } from '@/components/ui/CategoryTag';
 import {
@@ -146,7 +145,10 @@ export function JobDetailView({ job, viewerRole, hasApplied }: JobDetailViewProp
               </h1>
 
               <div className="mt-6 flex flex-wrap items-center gap-2">
-                <Badge tone="royal">{JOB_TYPES[job.jobType].label}</Badge>
+                <span className="fl-overline text-white">
+                  <span aria-hidden="true">— </span>
+                  {JOB_TYPES[job.jobType].label.toUpperCase()}
+                </span>
                 <span className="rounded-pill bg-white/10 px-2.5 py-1 text-caption text-white/80">
                   {WORK_MODES[job.workMode].label}
                 </span>
