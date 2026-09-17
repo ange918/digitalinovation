@@ -93,12 +93,12 @@ export default async function JobsPage({ searchParams }: PageProps) {
                   name="q"
                   defaultValue={query}
                   placeholder="Métier, compétence, maison…"
-                  className="h-11 w-full rounded-pill border border-line bg-canvas pl-11 pr-4 text-body-sm focus:border-royal-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-royal-500/20"
+                  className="h-11 w-full rounded-card border border-line bg-canvas pl-11 pr-4 text-body-sm focus:border-royal-500 focus:bg-white focus:outline-none focus:ring-0"
                 />
               </label>
               <button
                 type="submit"
-                className="h-11 shrink-0 rounded-pill bg-royal-500 px-6 text-body-sm font-semibold text-white hover:bg-royal-600"
+                className="h-11 shrink-0 rounded-card bg-royal-500 px-6 text-body-sm font-semibold text-white hover:bg-royal-600"
               >
                 Filtrer
               </button>
@@ -180,7 +180,7 @@ export default async function JobsPage({ searchParams }: PageProps) {
                         })}
                         aria-current={target === page ? 'page' : undefined}
                         className={cn(
-                          'flex h-9 min-w-9 items-center justify-center rounded-pill px-3 text-body-sm tabular transition-colors',
+                          'flex h-9 min-w-9 items-center justify-center rounded-card px-3 text-body-sm tabular transition-colors',
                           target === page
                             ? 'bg-midnight-900 font-semibold text-white'
                             : 'border border-line text-ink-muted hover:bg-white',

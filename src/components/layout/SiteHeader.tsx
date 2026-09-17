@@ -1,7 +1,6 @@
 import Link from 'next/link';
 
 import { ButtonLink } from '@/components/ui/Button';
-import { InterfaceSwitcher } from '@/components/layout/InterfaceSwitcher';
 import { getCurrentUser, type CurrentUser } from '@/lib/auth';
 import { landingPathForRole } from '@/lib/routes';
 import { cn } from '@/lib/utils';
@@ -21,7 +20,6 @@ export async function SiteHeader({ user: propUser }: { user?: CurrentUser | null
 
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-canvas/85 backdrop-blur-md">
-      <InterfaceSwitcher currentRole={user?.role} />
       <div className="container flex h-[var(--fl-header-height)] items-center justify-between gap-6">
         <div className="flex items-center gap-10">
           <Link href="/" className="shrink-0" aria-label="FASHLINK, accueil">

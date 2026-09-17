@@ -63,6 +63,15 @@ export async function applyToJobAction(
       select: { resumeUrl: true },
     });
 
+    // Les administrateurs a prevenir, lus en base. Un identifiant en dur
+    // (« user_admin ») figurait ici : la cle etrangere de `notifications`
+    // etait violee a chaque candidature, la transaction entiere annulee, et
+    // aucun talent ne pouvait donc postuler.
+    const admins = await prisma.user.findMany({
+      where: { role: 'ADMIN', status: 'ACTIVE', deletedAt: null },
+      select: { id: true },
+    });
+
     await prisma.$transaction(async (tx) => {
       const application = await tx.application.create({
         data: {
@@ -88,17 +97,22 @@ export async function applyToJobAction(
         data: { applicationCount: { increment: 1 } },
       });
 
-      // Notification à l'administrateur pour analyse du profil avant transmission
-      await tx.notification.create({
-        data: {
-          userId: 'user_admin', // Administrateur central
-          type: 'APPLICATION_RECEIVED',
-          title: 'Nouvelle candidature à analyser',
-          body: `${user.firstName} ${user.lastName} a postulé à l’offre « ${job.title} ». Profil en attente d'analyse pour transmission à ${job.company.name}.`,
-          href: `/admin#candidatures`,
-          data: { applicationId: application.id, jobId: job.id },
-        },
-      });
+      // La candidature arrive chez l'administrateur, jamais directement chez
+      // la maison : c'est FASHLINK qui analyse puis transmet. Si aucun compte
+      // administrateur n'est actif, la candidature est tout de meme
+      // enregistree — elle compte davantage que sa notification.
+      if (admins.length > 0) {
+        await tx.notification.createMany({
+          data: admins.map((admin) => ({
+            userId: admin.id,
+            type: 'APPLICATION_RECEIVED' as const,
+            title: 'Nouvelle candidature à analyser',
+            body: `${user.firstName} ${user.lastName} a postulé à « ${job.title} ». Profil en attente d'analyse avant transmission à ${job.company.name}.`,
+            href: '/admin#candidatures',
+            data: { applicationId: application.id, jobId: job.id },
+          })),
+        });
+      }
     });
 
     revalidatePath(`/offres/${job.slug}`);

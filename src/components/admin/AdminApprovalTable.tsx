@@ -69,6 +69,10 @@ export function AdminApprovalTable({ jobs }: AdminApprovalTableProps) {
   const [rowStates, setRowStates] = useState<Record<string, RowState>>({});
   const [rejecting, setRejecting] = useState<PendingJobRow | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // `router.refresh()` retire la ligne traitee de la file — elle n'est plus en
+  // attente. Sans trace a l'ecran, l'administrateur verrait sa demande
+  // disparaitre sans confirmation. On nomme donc la decision prise.
+  const [done, setDone] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const filtered = useMemo(() => {
@@ -85,12 +89,14 @@ export function AdminApprovalTable({ jobs }: AdminApprovalTableProps) {
 
   function handleApprove(job: PendingJobRow) {
     setError(null);
+    setDone(null);
     setRowStates((s) => ({ ...s, [job.id]: { status: 'working' } }));
 
     startTransition(async () => {
       const result = await approveJobAction({ jobId: job.id });
       if (result.ok) {
         setRowStates((s) => ({ ...s, [job.id]: { status: 'done', action: 'approved' } }));
+        setDone(`« ${job.title} » est publiée : les talents peuvent postuler.`);
         router.refresh();
       } else {
         setRowStates((s) => ({ ...s, [job.id]: { status: 'idle' } }));
@@ -101,6 +107,7 @@ export function AdminApprovalTable({ jobs }: AdminApprovalTableProps) {
 
   function handleReject(job: PendingJobRow, reason: string) {
     setError(null);
+    setDone(null);
     setRejecting(null);
     setRowStates((s) => ({ ...s, [job.id]: { status: 'working' } }));
 
@@ -108,6 +115,7 @@ export function AdminApprovalTable({ jobs }: AdminApprovalTableProps) {
       const result = await rejectJobAction({ jobId: job.id, reason });
       if (result.ok) {
         setRowStates((s) => ({ ...s, [job.id]: { status: 'done', action: 'rejected' } }));
+        setDone(`« ${job.title} » est renvoyée à la maison avec votre motif.`);
         router.refresh();
       } else {
         setRowStates((s) => ({ ...s, [job.id]: { status: 'idle' } }));
@@ -119,12 +127,14 @@ export function AdminApprovalTable({ jobs }: AdminApprovalTableProps) {
   return (
     <section className="fl-card overflow-hidden">
       {/* ---- En-tete ---- */}
+      {/* La page porte deja le titre et le chapo de la section : ici on ne
+          garde que le decompte et le filtre, qui sont propres a la file. Sur
+          une file vide, l'etat vide dit deja tout — un decompte a zero et un
+          champ de recherche inutilisable ne feraient que le repeter. */}
+      {jobs.length > 0 && (
       <header className="flex flex-col gap-4 border-b border-line p-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="font-bold text-title-lg text-midnight-900">
-            Demandes reçues
-          </h2>
-          <p className="mt-1 text-body-sm text-ink-muted">
+          <p className="text-body-sm text-ink-muted">
             {remaining === 0
               ? 'Aucune demande en attente. La file est vide.'
               : `${remaining} demande${remaining > 1 ? 's' : ''} en attente de décision.`}
@@ -140,7 +150,7 @@ export function AdminApprovalTable({ jobs }: AdminApprovalTableProps) {
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Métier ou maison…"
             className={cn(
-              'h-10 w-full rounded-pill border border-line bg-canvas pl-9 pr-4',
+              'h-10 w-full rounded-card border border-line bg-canvas pl-9 pr-4',
               'text-body-sm text-midnight-900 placeholder:text-ink-faint',
               'transition-colors duration-150 ease-editorial',
               'focus:border-royal-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-royal-500/20',
@@ -148,6 +158,17 @@ export function AdminApprovalTable({ jobs }: AdminApprovalTableProps) {
           />
         </label>
       </header>
+      )}
+
+      {done && (
+        <p
+          role="status"
+          className="flex items-center gap-2 border-b border-success-500/20 bg-success-50 px-6 py-3 text-body-sm text-success-700"
+        >
+          <CheckIcon className="h-4 w-4 shrink-0" />
+          {done}
+        </p>
+      )}
 
       {error && (
         <p
@@ -352,7 +373,6 @@ function RowActions({
       </Button>
       <Button
         size="sm"
-        variant="success"
         onClick={onApprove}
         loading={state.status === 'working'}
         disabled={disabled}

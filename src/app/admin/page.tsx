@@ -57,7 +57,7 @@ export default async function AdminPage() {
           </p>
         </header>
 
-        <dl className="mb-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <dl className="mb-10 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           <Counter label="Demandes en attente" value={counters.pending} highlight />
           <Counter label="Postes à pourvoir" value={counters.openSeats} />
           <Counter label="Candidatures à analyser" value={counters.toReview} />
@@ -128,12 +128,14 @@ function Counter({
     <div
       className={
         highlight
-          ? 'rounded-card border border-royal-200 bg-royal-50/50 p-5'
-          : 'rounded-card border border-line bg-white p-5'
+          ? 'rounded-card border border-royal-200 bg-royal-50/50 p-4 sm:p-5'
+          : 'rounded-card border border-line bg-white p-4 sm:p-5'
       }
     >
       <dt className="fl-overline">{label}</dt>
-      <dd className="mt-2 font-bold text-display-sm text-midnight-900 tabular">{value}</dd>
+      <dd className="mt-1.5 font-bold text-title-lg text-midnight-900 tabular sm:text-display-sm">
+        {value}
+      </dd>
     </div>
   );
 }

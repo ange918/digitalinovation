@@ -36,7 +36,11 @@ export default async function RecruiterPage() {
     prisma.application.findMany({
       where: {
         job: { companyId: company.id },
-        status: 'SHORTLISTED', // Profils analysés et transmis par l'administrateur
+        // Tout ce que FASHLINK a transmis, et la suite du parcours. Filtrer sur
+        // le seul SHORTLISTED faisait disparaitre de l'ecran de la maison le
+        // talent des qu'il etait place chez elle — au moment precis ou elle a
+        // le plus besoin de le voir.
+        status: { in: ['SHORTLISTED', 'INTERVIEW', 'OFFER', 'HIRED'] },
       },
       orderBy: { updatedAt: 'desc' },
       include: {
